@@ -35,9 +35,12 @@ _strncpy
 		EXPORT	_malloc
 _malloc
 		; save registers
+		PUSH	{R7, LR}
 		; set the system call # to R7
-	        SVC     #0x0
+		MOV		R7, #0xC0
+    SVC     #0x4
 		; resume registers
+		POP		{R7, LR}
 		MOV		pc, lr
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -251,12 +251,28 @@ UsageFault_Handler\
                 B       .
                 ENDP
 SVC_Handler     PROC 		; (Step 2)
-        	EXPORT  SVC_Handler               [WEAK]
-		; Save registers 
-		; Invoke _syscall_table_ump
-		; Retrieve registers
-		; Go back to stdlib.s
-                B       .
+                EXPORT  SVC_Handler               [WEAK]
+                IMPORT  _syscall_table_jump
+                IMPORT	_syscall_table_init
+                        
+                ; initialize system call table
+                BL		_syscall_table_init
+                
+                ; Save registers
+                PUSH	{R12, LR}
+                
+                ; Extract SVC number from the instruction
+                LDR		R0, [LR, #-4]
+                BIC		R0, R0, #0xFF000000
+                
+                ; Invoke _syscall_table_jump
+                BL		_syscall_table_jump
+                
+                ; Retrieve registers
+                POP		{R12, LR}
+                
+                ; Go back to stdlib.s
+                MOV		PC, LR
                 ENDP
 DebugMon_Handler\
                 PROC
