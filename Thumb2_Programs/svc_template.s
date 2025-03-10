@@ -67,21 +67,55 @@ _syscall_table_init
 ; System Call Table Jump Routine
         EXPORT	_syscall_table_jump
 _syscall_table_jump
-		; Save registers
-		STMFD   SP!, {R4-R12, LR}
+		STMFD   SP!, {R4-R12, LR}   ; Save registers
 
-		; Load the system call number from R0
-		LDR     R1, =SYSTEMCALLTBL    ; Load the base address of the system call table
-		LSL     R0, R0, #2            ; Multiply the system call number by 4 (each entry is 4 bytes)
-		ADD     R1, R1, R0            ; Calculate the address of the system call table entry
-		LDR     R1, [R1]              ; Load the address of the function from the system call table
+        CMP     R7, #2              ; Check if syscall is _signal (SYS_SIGNAL)
+        BNE     normal_syscall      ; If not, handle normally
 
-		; Jump to the function
-		BLX     R1                    ; Branch with link and exchange (call the function)
+        ; Special case: _signal syscall
+        LDR     R1, =SYSTEMCALLTBL  
+        LSL     R0, R4, #2          ; Calculate offset
+        ADD     R1, R1, R0  
+        LDR     R1, [R1]            ; Load function pointer
 
-		; Restore registers and return
-		LDMFD	SP!, {R4-R12, LR}
-		BX		LR
+        CMP     R1, #0              ; Ensure function pointer is valid
+        BEQ     syscall_done
+
+        ; Call the function, preserving R0 (SIGALRM value)
+        BLX     R1                  
+        B       syscall_done
+
+normal_syscall
+        LDR     R1, =SYSTEMCALLTBL  
+        LSL     R0, R4, #2  
+        ADD     R1, R1, R0  
+        LDR     R1, [R1]            
+
+        CMP     R1, #0              
+        BEQ     syscall_done
+
+        MOV     R0, R4              
+        BLX     R1                  
+
+syscall_done
+        LDMFD   SP!, {R4-R12, LR}  
+        BX      LR
+
+;		; Save registers
+;		STMFD   SP!, {R4-R12, LR}
+
+;		; Load the system call number from R0
+;		LDR     R1, =SYSTEMCALLTBL    ; Load the base address of the system call table
+;		LSL     R0, R0, #2            ; Multiply the system call number by 4 (each entry is 4 bytes)
+;		ADD     R1, R1, R0            ; Calculate the address of the system call table entry
+;		LDR     R1, [R1]              ; Load the address of the function from the system call table
+
+;		; Jump to the function
+;		BLX     R1                    ; Branch with link and exchange (call the function)
+
+;		; Restore registers and return
+;		LDMFD	SP!, {R4-R12, LR}
+;		BX		LR
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; idk what's going on with these two lol

@@ -207,9 +207,12 @@ Reset_Handler   PROC
                 IMPORT  SystemInit
 				IMPORT	_syscall_table_init
 				IMPORT	_heap_init
+				IMPORT 	_timer_init
 				IMPORT  __main
+					
 	
 				; Store __initial_sp into MSP (Step 1 toward Midpoint Report)
+				LDR		R13,=__initial_sp
 
 				ISB     ; Let's leave as is from the original.
                 LDR     R0, =SystemInit
@@ -222,7 +225,8 @@ Reset_Handler   PROC
 				BL		_heap_init
 				
 				; Initialize the SysTick timer (Step 2)
-			
+				BL      _timer_init
+				
 				; Store __initial_user_sp into PSP (Step 1 toward Midpoint Report)
 				; Change CPU mode into unprivileged thread mode using PSP
 
@@ -256,25 +260,30 @@ UsageFault_Handler\
                 EXPORT  UsageFault_Handler        [WEAK]
                 B       .
                 ENDP
-SVC_Handler     PROC 		; (Step 2)
-				EXPORT  SVC_Handler               [WEAK]
-				IMPORT  _syscall_table_jump
-				
-				; Save registers
-				STMFD   SP!, {R4-R12, LR}
-				
-				; Load SVC number
-				MOV     R0, R7
-				
-				; Invoke _syscall_table_jump
-				BL		_syscall_table_jump
-				
-				; Retrieve registers
-				LDMFD	SP!, {R4-R12, LR}
-				
-				; Go back to stdlib.s
-				BX		LR
-				ENDP
+SVC_Handler     PROC
+                EXPORT  SVC_Handler               [WEAK]
+                IMPORT  _syscall_table_jump
+
+                STMFD   SP!, {R4-R12, LR}  ; Save registers
+
+                CMP     R7, #2             ; Check if syscall is `_signal`
+                BNE     normal_syscall     ; If not, proceed normally
+
+                ; Load syscall number in R0
+                BL      _syscall_table_jump
+
+                ; Restore R0 so _signal_handler gets the correct `SIGALRM`
+                MOV     R0, R4
+                B       restore_registers
+
+normal_syscall
+                MOV     R0, R7
+                BL      _syscall_table_jump
+
+restore_registers
+                LDMFD   SP!, {R4-R12, LR}  ; Restore registers
+                BX      LR
+                ENDP
 DebugMon_Handler\
                 PROC
                 EXPORT  DebugMon_Handler          [WEAK]
@@ -289,19 +298,11 @@ SysTick_Handler\
                 PROC		; (Step 2)
 				EXPORT  SysTick_Handler           [WEAK]
 				IMPORT _timer_update
-				
-				; Save registers
-				STMFD   SP!, {R4-R12, LR}
-				
-				; Invoke _timer_update
-				BL        _timer_update
-				
-				; Retrieve registers
-				LDMFD    SP!, {R4-R12, LR}
-				
-				; Change from MSP to PSP
-				; Go back to the user program
-				BX      LR
+
+				PUSH    {LR}
+				BL      _timer_update    ; Call the timer update function
+				POP     {LR}
+				BX      LR               ; Return from interrupt
                 ENDP
 
 GPIOA_Handler\
