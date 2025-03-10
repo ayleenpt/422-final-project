@@ -43,7 +43,7 @@ _zero_loop
 		EXPORT	_kalloc
 _kalloc
 		; save return address and input size
-		PUSH	{LR}
+		STMFD   SP!, {R4-R12, LR}
 		PUSH	{R0}
 		
 		; call _ralloc with the full range of the heap
@@ -53,7 +53,7 @@ _kalloc
 		
 		; restore the return address and return
 		POP		{R0}
-		POP		{LR}		
+		LDMFD	SP!, {R4-R12, LR}		
 		MOV		PC, LR
 		
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -61,7 +61,7 @@ _kalloc
 ; void _ralloc
 _ralloc
 		; save registers
-		PUSH    {R4-R7, LR}
+		STMFD   SP!, {R4-R12, LR}
 
 		; load the requested size from the stack
 		LDR     R2, [SP, #20]
@@ -102,7 +102,7 @@ _ralloc
 
 _ralloc_success
 		; return the address of the allocated block
-		POP     {R4-R7, LR}
+		LDMFD	SP!, {R4-R12, LR}
 		BX      LR
 
 _ralloc_allocate

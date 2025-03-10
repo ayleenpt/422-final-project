@@ -2,11 +2,6 @@
 		THUMB
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-IMPORT _kfree
-IMPORT _kalloc
-IMPORT _signal_handler
-IMPORT _timer_start
-
 ; System Call Table
 SYSTEMCALLTBL	EQU		0x20007B00 ; originally 0x20007500
 SYS_EXIT		EQU		0x0		; address 20007B00
@@ -19,39 +14,53 @@ SYS_FREE		EQU		0x5		; address 20007B14
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; System Call Table Initialization
 		EXPORT	_syscall_table_init
+		IMPORT	_kalloc
+		IMPORT	_kfree
+		IMPORT	_timer_start
+		IMPORT	_signal_handler
 _syscall_table_init
 		; Save registers
-		PUSH    {R4, LR}
+		STMFD   SP!, {R4-R12, LR}
 
 		; load system call addresses
 		LDR     R0, =SYSTEMCALLTBL
 
 		; SYS_EXIT (0x0)
 		LDR     R1, =_sys_exit
-		STR     R1, [R0, #SYS_EXIT]
+		STR     R1, [R0]		; store in base address
 
 		; SYS_ALARM (0x1)
 		LDR     R1, =_timer_start
-		STR     R1, [R0, #SYS_ALARM]
+		LDR     R2, =SYS_ALARM  ; get call table index
+		LSL		R2, R2, #2		; offset = index mult by 4
+		STR     R1, [R0, R2]	; store function address at base address + offset
 
 		; SYS_SIGNAL (0x2)
 		LDR     R1, =_signal_handler
-		STR     R1, [R0, #SYS_SIGNAL]
+		LDR     R2, =SYS_SIGNAL
+		LSL		R2, R2, #2
+		STR     R1, [R0, R2]
 
 		; SYS_MEMCPY (0x3)
 		LDR     R1, =_memcpy
-		STR     R1, [R0, #SYS_MEMCPY]
+		LDR     R2, =SYS_MEMCPY
+		LSL		R2, R2, #2
+		STR     R1, [R0, R2]
 
 		; SYS_MALLOC (0x4)
 		LDR     R1, =_kalloc
-		STR     R1, [R0, #SYS_MALLOC]
+		LDR     R2, =SYS_MALLOC
+		LSL		R2, R2, #2
+		STR     R1, [R0, R2]
 
 		; SYS_FREE (0x5)
 		LDR     R1, =_kfree
-		STR     R1, [R0, #SYS_FREE]
+		LDR     R2, =SYS_FREE
+		LSL		R2, R2, #2
+		STR     R1, [R0, R2]
 
 		; Restore registers and return
-		POP     {R4, LR}
+		LDMFD	SP!, {R4-R12, LR}
 		MOV     PC, LR
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -59,7 +68,7 @@ _syscall_table_init
         EXPORT	_syscall_table_jump
 _syscall_table_jump
 		; Save registers
-		PUSH    {R4, LR}
+		STMFD   SP!, {R4-R12, LR}
 
 		; Load the system call number from R0
 		LDR     R1, =SYSTEMCALLTBL    ; Load the base address of the system call table
@@ -71,7 +80,7 @@ _syscall_table_jump
 		BLX     R1                    ; Branch with link and exchange (call the function)
 
 		; Restore registers and return
-		POP     {R4, LR}
+		LDMFD	SP!, {R4-R12, LR}
 		MOV     PC, LR
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -80,7 +89,6 @@ _sys_exit
 		MOV     PC, LR
 
 _memcpy
-		
 		MOV     PC, LR
 
-		END		
+		END

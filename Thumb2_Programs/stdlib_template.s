@@ -10,8 +10,18 @@
 ;   none
 		EXPORT	_bzero
 _bzero
-		; implement your complete logic, including stack operations
-		MOV		pc, lr	
+		STMFD   SP!, {R1-R12,LR}
+        MOV     R3, R0            ; Save original pointer
+        MOV     R2, #0            ; Value to store (zero)
+bzero_loop
+        SUBS    R1, R1, #1        ; Decrement counter
+        BMI     bzero_return      ; Branch if negative (done)
+        STRB    R2, [R0], #1      ; Store byte and increment pointer
+        B       bzero_loop        ; Continue loop
+bzero_return
+        MOV     R0, R3            ; Restore original pointer
+        LDMFD   SP!, {R1-R12,LR}  ; Restore registers
+        MOV     PC, LR            ; Return
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; char* _strncpy( char* dest, char* src, int size )
@@ -23,8 +33,20 @@ _bzero
 ;   dest
 		EXPORT	_strncpy
 _strncpy
-		; implement your complete logic, including stack operations
-		MOV		pc, lr
+		STMFD   SP!, {R1-R12,LR}  ; Save registers
+        MOV     R3, R0            ; Save original destination pointer
+_strncpy_loop
+        SUBS    R2, R2, #1        ; Decrement size counter
+        BMI     _strncpy_return   ; Branch if negative (done)
+        LDRB    R4, [R1], #1      ; Load byte from src and increment
+        STRB    R4, [R0], #1      ; Store byte to dest and increment
+        CMP     R4, #0            ; Check if null terminator
+        BEQ     _strncpy_return   ; If null, we're done
+        B       _strncpy_loop     ; Continue loop
+_strncpy_return
+        MOV     R0, R3            ; Return original destination pointer
+        LDMFD   SP!, {R1-R12,LR}  ; Restore registers
+        MOV     PC, LR            ; Return
 		
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; void* _malloc( int size )
@@ -35,12 +57,14 @@ _strncpy
 		EXPORT	_malloc
 _malloc
 		; save registers
-		PUSH	{R7, LR}
+		STMFD   SP!, {R4-R12, LR}
+		
 		; set the system call # to R7
-		MOV		R7, #0xC0
-    SVC     #0x4
+		MOV		R7, #0x4
+		SVC     #0x4
+		
 		; resume registers
-		POP		{R7, LR}
+		LDMFD	SP!, {R4-R12, LR}
 		MOV		pc, lr
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -52,9 +76,14 @@ _malloc
 		EXPORT	_free
 _free
 		; save registers
+		STMFD   SP!, {R4-R12, LR}
+		
 		; set the system call # to R7
-        	SVC     #0x0
+		MOV		R7, #0x5
+		SVC     #0x5
+		
 		; resume registers
+		LDMFD	SP!, {R4-R12, LR}
 		MOV		pc, lr
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -67,11 +96,16 @@ _free
 ;                  ed alarm. 
 		EXPORT	_alarm
 _alarm
-		; save registers
-		; set the system call # to R7
-        	SVC     #0x0
-		; resume registers	
-		MOV		pc, lr		
+		; Save registers
+        PUSH    {R1-R12, LR}
+
+        ; Set system call number for alarm
+        MOV        R7, #1
+        SVC        #0x0
+
+        ; Restore registers
+        POP        {R1-R12, LR}
+        MOV        PC, LR		
 			
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; void* _signal( int signum, void *handler )
@@ -83,11 +117,16 @@ _alarm
 ;             (the same as the 2nd parameter in this project)
 		EXPORT	_signal
 _signal
-		; save registers
-		; set the system call # to R7
-        	SVC     #0x0
-		; resume registers
-		MOV		pc, lr	
+		; Save registers
+        PUSH    {R2-R12, LR}
+
+        ; Set system call number for signal
+        MOV        R7, #2
+        SVC        #0x0
+
+        ; Restore registers
+        POP        {R2-R12, LR}
+        MOV        PC, LR    
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 		END			
