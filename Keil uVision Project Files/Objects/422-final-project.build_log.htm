@@ -1,0 +1,81 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Tool Versions:</h2>
+IDE-Version: µVision V5.41.0.0
+Copyright (C) 2024 ARM Ltd and ARM Germany GmbH. All rights reserved.
+License Information: Khushnain Gobindpuri, University of Washington, LIC=----
+ 
+Tool Versions:
+Toolchain:       MDK-Lite  Version: 5.41.0.0
+Toolchain Path:  C:\Users\Train\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin
+C Compiler:      ArmClang.exe V6.22
+Assembler:       Armasm.exe V6.22
+Linker/Locator:  ArmLink.exe V6.22
+Library Manager: ArmAr.exe V6.22
+Hex Converter:   FromElf.exe V6.22
+CPU DLL:         SARMCM3.DLL V5.41.0.0
+Dialog DLL:      DCM.DLL V1.17.5.0
+Target DLL:      UL2CM3.DLL V1.164.14.0
+Dialog DLL:      TCM.DLL V1.56.4.0
+ 
+<h2>Project:</h2>
+C:\Users\Train\Desktop\422-FINAL-THIS\422-final-project\Keil uVision Project Files\422-final-project.uvprojx
+Project File Date:  03/09/2025
+
+<h2>Output:</h2>
+*** Using Compiler 'V6.22', folder: 'C:\Users\Train\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin'
+Rebuild target 'Target_1'
+assembling stdlib_template.s...
+../C_Programs/driver_keil.c(13): warning: unused parameter 'signum' [-Wunused-parameter]
+   13 | void sig_handler1( int signum ) {
+      |                        ^
+../C_Programs/driver_keil.c(17): warning: unused parameter 'signum' [-Wunused-parameter]
+   17 | void sig_handler2( int signum ) {
+      |                        ^
+2 warnings generated.
+compiling driver_keil.c...
+assembling timer_template.s...
+"../Thumb2_Programs/svc_template.s", line 94: Warning: A1581W: Added 2 bytes of padding at address 0x66
+   94 00000068   END
+0 Errors, 1 Warning
+assembling svc_template.s...
+assembling heap_template.s...
+assembling startup_TM4C129.s...
+compiling system_TM4C129.c...
+linking...
+Program Size: Code=1920 RO-data=584 RW-data=4 ZI-data=24680  
+".\Objects\422-final-project.axf" - 0 Error(s), 2 Warning(s).
+
+<h2>Software Packages used:</h2>
+
+Package Vendor: ARM
+                https://www.keil.com/pack/ARM.CMSIS.6.1.0.pack
+                ARM::CMSIS@6.1.0
+                CMSIS (Common Microcontroller Software Interface Standard)
+   * Component: CORE Version: 6.1.0
+
+Package Vendor: Keil
+                http://www.keil.com/pack/Keil.TM4C_DFP.1.1.0.pack
+                Keil::TM4C_DFP@1.1.0
+                Texas Instruments Tiva C Series Device Support and Examples
+   * Component: Startup Version: 1.0.0
+
+<h2>Collection of Component include folders:</h2>
+  ./RTE/_Target_1
+  C:/Users/Train/AppData/Local/Arm/Packs/ARM/CMSIS/6.1.0/CMSIS/Core/Include
+  C:/Users/Train/AppData/Local/Arm/Packs/Keil/TM4C_DFP/1.1.0/Device/Include/TM4C129
+
+<h2>Collection of Component Files used:</h2>
+
+   * Component: ARM::CMSIS:CORE@6.1.0
+
+   * Component: Keil::Device:Startup@1.0.0
+      Include file:  Device/Include/TM4C129/TM4C129.h
+      Source file:   Device/Source/ARM/startup_TM4C129.s
+      Source file:   Device/Source/system_TM4C129.c
+Build Time Elapsed:  00:00:00
+</pre>
+</body>
+</html>

@@ -60,7 +60,7 @@ _malloc
 		STMFD   SP!, {R4-R12, LR}
 		
 		; set the system call # to R7
-		MOV		R7, #0x4
+;		MOV		R7, #0x4
 		SVC     #0x4
 		
 		; resume registers
@@ -79,7 +79,7 @@ _free
 		STMFD   SP!, {R4-R12, LR}
 		
 		; set the system call # to R7
-		MOV		R7, #0x5
+;		MOV		R7, #0x5
 		SVC     #0x5
 		
 		; resume registers
@@ -100,7 +100,7 @@ _alarm
         PUSH    {R1-R12, LR}
 
         ; Set system call number for alarm
-        MOV        R7, #1
+;        MOV        R7, #1
         SVC        #0x0
 
         ; Restore registers
@@ -121,7 +121,7 @@ _signal
         PUSH    {R2-R12, LR}
 
         ; Set system call number for signal
-        MOV        R7, #2
+;        MOV        R7, #2
         SVC        #0x0
 
         ; Restore registers

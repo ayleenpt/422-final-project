@@ -59,6 +59,7 @@ _kalloc
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Helper function for kernel memory allocation
 ; void _ralloc
+		EXPORT _ralloc
 _ralloc
 		; save registers
 		STMFD   SP!, {R4-R12, LR}
@@ -148,6 +149,7 @@ _kfree
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Helper function for kernel memory de-allocation
 ; void _rfree
+		EXPORT _rfree
 _rfree
 		; save registers
 		PUSH	{R4, R7, LR}
