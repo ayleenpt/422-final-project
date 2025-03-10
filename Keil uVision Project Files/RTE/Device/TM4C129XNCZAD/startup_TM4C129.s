@@ -210,7 +210,9 @@ Reset_Handler   PROC
 				IMPORT  __main
 	
 				; Store __initial_sp into MSP (Step 1 toward Midpoint Report)
-
+				LDR     R1, =__initial_sp     ; Load address of __initial_sp into R0
+				MSR     MSP, R1             ; Set MSP directly
+				
 				ISB     ; Let's leave as is from the original.
                 LDR     R0, =SystemInit
 				BLX     R0
@@ -222,9 +224,18 @@ Reset_Handler   PROC
 				BL		_heap_init
 				
 				; Initialize the SysTick timer (Step 2)
-			
+				IMPORT		_timer_init
+                BL			_timer_init
+				
 				; Store __initial_user_sp into PSP (Step 1 toward Midpoint Report)
+				LDR     R1, =__initial_user_sp ; Load address of __initial_user_sp into R0
+				MSR     PSP, R1                ; Set PSP directly
+				
+				
 				; Change CPU mode into unprivileged thread mode using PSP
+				MOV		R1, #0x3 ; load 0x3 into R1 to set CONTROL SPSEL field to select PSP and unprivileged mode
+				MSR  	CONTROL, R1 ; set the field inside of CONTROL (can only do using register, not immediate value)
+				ISB		; claude recommended, this is needed after changing CONTROL
 
                 LDR     R0, =__main
                 BX      R0

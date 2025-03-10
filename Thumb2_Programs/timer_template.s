@@ -23,6 +23,7 @@ USR_HANDLER     EQU		0x20007B84		; Address of a user-given signal handler functi
 		EXPORT		_timer_init
 _timer_init
 	; Implement by yourself
+			STMFD   SP!, {R4-R12, LR}
 			LDR     R1, =STCTRL
 			MOV     R0, #STCTRL_STOP  ; Disable timer
 			STR     R0, [R1]
@@ -35,25 +36,40 @@ _timer_init
 			MOV     R0, #STCURR_CLR   ; Clear counter
 			STR     R0, [R1]
 			
-			MOV		pc, lr		; return to Reset_Handler
+			LDMFD	SP!, {R4-R12, LR}
+			BX		LR		; return to Reset_Handler
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Timer start
 ; int timer_start( int seconds )
 		EXPORT		_timer_start
 _timer_start
-	; Implement by yourself
-			PUSH    {R4, LR}       ; Save registers
-
+	; Implement by yourself (from claude)
+			STMFD   SP!, {R4-R12, LR}
+    
+			; 1. Retrieve previous value from SECOND_LEFT
 			LDR     R1, =SECOND_LEFT
-			STR     R0, [R1]       ; Store seconds to SECOND_LEFT
-
-			LDR     R1, =STCTRL
-			MOV     R0, #STCTRL_GO ; Enable SysTick timer with interrupts
+			LDR     R4, [R1]        ; Store previous value in R4
+			
+			; 2. Save new seconds value from R0
 			STR     R0, [R1]
-
-			POP     {R4, LR} 
-			MOV		pc, lr		; return to SVC_Handler
+			
+			; 3. Clear STCURRENT
+			LDR     R1, =STCURRENT
+			MOV     R0, #STCURR_CLR
+			STR     R0, [R1]
+			
+			; 4. Enable SysTick
+			LDR     R1, =STCTRL
+			MOV     R0, #STCTRL_GO
+			STR     R0, [R1]
+			
+			; Return previous value
+			MOV     R0, R4
+			
+			POP     {R4, LR}
+			LDMFD	SP!, {R4-R12, LR}
+			BX      lr
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Timer update
@@ -61,7 +77,7 @@ _timer_start
 		EXPORT		_timer_update
 _timer_update
 	;; Implement by yourself
-		PUSH    {R4, LR}        ; Save registers
+		STMFD   SP!, {R4-R12, LR}
 
 		LDR     R1, =SECOND_LEFT
 		LDR     R0, [R1]        ; Load current seconds left
@@ -85,7 +101,8 @@ _timer_update
 
 _timer_update_done
 		POP     {R4, LR}
-		MOV		pc, lr		; return to SysTick_Handler
+		LDMFD	SP!, {R4-R12, LR}
+		BX		LR		; return to SysTick_Handler
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Timer update
@@ -93,14 +110,16 @@ _timer_update_done
 	    EXPORT	_signal_handler
 _signal_handler
 	; Implement by yourself
-		PUSH    {R4, LR}
-
-		LDR     R1, =USR_HANDLER
-		LDR     R0, [R1]    ; Load previous function pointer
-
-		STR     R1, [R1]    ; Store new function pointer
-
+		STMFD   SP!, {R4-R12, LR}
+		CMP     R0, #SIGALRM       ; Check if it's SIGALRM (14)
+		BNE     not_sigalrm
+		
+		LDR     R2, =USR_HANDLER
+		LDR     R0, [R2]           ; Load previous function pointer 
+		STR     R1, [R2]           ; Store new function pointer from R1
+not_sigalrm
 		POP     {R4, LR}
-		MOV		pc, lr		; return to Reset_Handler
+		LDMFD	SP!, {R4-R12, LR}
+		BX      lr                 ; Use BX instead of MOV pc, lr
 		
 		END

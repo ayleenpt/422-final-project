@@ -21,7 +21,7 @@ bzero_loop
 bzero_return
         MOV     R0, R3            ; Restore original pointer
         LDMFD   SP!, {R1-R12,LR}  ; Restore registers
-        MOV     PC, LR            ; Return
+        BX		LR           ; Return
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; char* _strncpy( char* dest, char* src, int size )
@@ -46,7 +46,7 @@ _strncpy_loop
 _strncpy_return
         MOV     R0, R3            ; Return original destination pointer
         LDMFD   SP!, {R1-R12,LR}  ; Restore registers
-        MOV     PC, LR            ; Return
+        BX		LR
 		
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; void* _malloc( int size )
@@ -60,12 +60,12 @@ _malloc
 		STMFD   SP!, {R4-R12, LR}
 		
 		; set the system call # to R7
-;		MOV		R7, #0x4
+		MOV		R7, #4
 		SVC     #0x4
 		
 		; resume registers
 		LDMFD	SP!, {R4-R12, LR}
-		MOV		pc, lr
+		BX		LR ;;;;;;; CHANGED FROM MOV LR PC
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; void _free( void* addr )
@@ -79,12 +79,12 @@ _free
 		STMFD   SP!, {R4-R12, LR}
 		
 		; set the system call # to R7
-;		MOV		R7, #0x5
+		MOV		R7, #5
 		SVC     #0x5
 		
 		; resume registers
 		LDMFD	SP!, {R4-R12, LR}
-		MOV		pc, lr
+		BX		LR
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; unsigned int _alarm( unsigned int seconds )
@@ -100,12 +100,12 @@ _alarm
         PUSH    {R1-R12, LR}
 
         ; Set system call number for alarm
-;        MOV        R7, #1
-        SVC        #0x0
+        MOV        R7, #1
+        SVC        #0x1
 
         ; Restore registers
         POP        {R1-R12, LR}
-        MOV        PC, LR		
+        BX			LR		
 			
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; void* _signal( int signum, void *handler )
@@ -121,12 +121,12 @@ _signal
         PUSH    {R2-R12, LR}
 
         ; Set system call number for signal
-;        MOV        R7, #2
-        SVC        #0x0
+        MOV        R7, #2
+        SVC        #0x2
 
         ; Restore registers
         POP        {R2-R12, LR}
-        MOV        PC, LR    
+        BX			LR  
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 		END			
