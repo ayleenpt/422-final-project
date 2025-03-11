@@ -275,7 +275,7 @@ SVC_Handler     PROC 		; (Step 2)
 				STMFD   SP!, {R4-R12, LR}
 				
 				; Load SVC number
-				MOV     R0, R7
+;				MOV     R0, R7
 				
 				; Invoke _syscall_table_jump
 				BL		_syscall_table_jump
@@ -310,7 +310,13 @@ SysTick_Handler\
 				; Retrieve registers
 				LDMFD    SP!, {R4-R12, LR}
 				
-				; Change from MSP to PSP
+				; Change from MSP to PSP (not entirely sure about this)
+				LDR     R1, =__initial_user_sp  
+				MSR     PSP, R1                 
+				MOV     R1, #2                 
+				MSR     CONTROL, R1
+				ISB               
+				
 				; Go back to the user program
 				BX      LR
                 ENDP

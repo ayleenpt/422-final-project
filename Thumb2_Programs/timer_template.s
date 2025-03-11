@@ -32,45 +32,34 @@ _timer_init
 			LDR     R0, =STRELOAD_MX  ; Load max value
 			STR     R0, [R1]
 
-;			LDR     R1, =STCURRENT
-;			MOV     R0, #STCURR_CLR   ; Clear counter
-;			STR     R0, [R1]
-			
 			LDMFD	SP!, {R4-R12, LR}
 			BX		LR		; return to Reset_Handler
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Timer start
 ; int timer_start( int seconds )
 		EXPORT		_timer_start
-_timer_start ;;;;;;;;;;;; work on this, i think its section 5.3 
-	; Implement by yourself (from claude)
+_timer_start 
+	; Implement by yourself
 			STMFD   SP!, {R4-R12, LR}
-    
-			; 1. Retrieve previous value from SECOND_LEFT
-			LDR     R1, =SECOND_LEFT
-			LDR     R4, [R1]        ; Store previous value in R4
 			
-			; 2. Save new seconds value from R0
-			STR     R0, [R1]
+			; R0 already has the seconds argument in here from alarm (seconds) function
 			
-			; 3. Clear STCURRENT
-			LDR     R1, =STCURRENT
-			MOV     R0, #STCURR_CLR
-			STR     R0, [R1]
+			; rettrieve previous value at SECOND_LEFT
+			LDR		R1, =SECOND_LEFT
 			
-			; 4. Enable SysTick
-			LDR     R1, =STCTRL
-			MOV     R0, #STCTRL_GO
-			STR     R0, [R1]
+			; store seconds argument (R0) into SECOND_LEFT address at R1
+			STR		R0, [R1]
 			
-			; Return previous value
-			MOV     R0, R4
+			; start systick timer by writing STCTRL_GO to STCTRL
+			LDR		R2, =STCTRL
+			MOV		R2, #STCTRL_GO
 			
-			POP     {R4, LR}
+			; clear current value register by loading STCURRENT and writing STCURR_CLR into it
+			LDR		R3, =STCURRENT
+			MOV		R4, #STCURR_CLR
+			
 			LDMFD	SP!, {R4-R12, LR}
-			BX      lr
-
+			BX		LR
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Timer update
 ; void timer_update( )
@@ -117,35 +106,22 @@ _timer_stop
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Timer update
 ; void* signal_handler( int signum, void* handler )
-; System Timer Definition
-;STCTRL		EQU		0xE000E010		; SysTick Control and Status Register
-;STRELOAD	EQU		0xE000E014		; SysTick Reload Value Register
-;STCURRENT	EQU		0xE000E018		; SysTick Current Value Register
-;	
-;STCTRL_STOP	EQU		0x00000004		; Bit 2 (CLK_SRC) = 1, Bit 1 (INT_EN) = 0, Bit 0 (ENABLE) = 0
-;STCTRL_GO	EQU		0x00000007		; Bit 2 (CLK_SRC) = 1, Bit 1 (INT_EN) = 1, Bit 0 (ENABLE) = 1
-;STRELOAD_MX	EQU		0x00FFFFFF		; MAX Value = 1/16MHz * 16M = 1 second
-;STCURR_CLR	EQU		0x00000000		; Clear STCURRENT and STCTRL.COUNT	
-;SIGALRM		EQU		14				; sig alarm
-
-;; System Variables
-;SECOND_LEFT		EQU		0x20007B80		; Secounds left for alarm( )
-;USR_HANDLER     EQU		0x20007B84		; Address of a user-given signal handler function	
-	
 	    EXPORT	_signal_handler
 _signal_handler
 	; Implement by yourself
 		STMFD   SP!, {R4-R12, LR}
 		
-		CMP     R0, #SIGALRM       ; Check if it's SIGALRM (14)
+		CMP     R0, #SIGALRM      
 		BNE     not_sigalrm
 		
 		LDR     R2, =USR_HANDLER
-		LDR     R0, [R2]           ; Load previous function pointer 
-		STR     R1, [R2]           ; Store new function pointer from R1
+		MOV		R3, R2
+		STR     R1, [R2]           
+		MOV     R0, R3     
+		BX		LR
+		
 not_sigalrm
-		POP     {R4, LR}
 		LDMFD	SP!, {R4-R12, LR}
-		BX      lr                 ; Use BX instead of MOV pc, lr
+		BX      LR                ; Use BX instead of MOV pc, lr
 		
 		END
