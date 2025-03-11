@@ -65,9 +65,6 @@ _timer_start ;;;;;;;;;;;; work on this, i think its section 5.3
 			STR     R0, [R1]
 			
 			; Return previous value
-			MOV     R0, R4
-			
-			POP     {R4, LR}
 			LDMFD	SP!, {R4-R12, LR}
 			BX      lr
 
@@ -141,11 +138,12 @@ _signal_handler
 		BNE     not_sigalrm
 		
 		LDR     R2, =USR_HANDLER
-		LDR     R0, [R2]           ; Load previous function pointer 
-		STR     R1, [R2]           ; Store new function pointer from R1
+		MOV		R3, R2
+		STR     R1, [R2]           
+		MOV     R0, R3          
+		
 not_sigalrm
-		POP     {R4, LR}
 		LDMFD	SP!, {R4-R12, LR}
-		BX      lr                 ; Use BX instead of MOV pc, lr
+		BX      LR                ; Use BX instead of MOV pc, lr
 		
 		END
