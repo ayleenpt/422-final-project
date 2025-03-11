@@ -111,13 +111,14 @@ _signal_handler
 	; Implement by yourself
 		STMFD   SP!, {R4-R12, LR}
 		
-		CMP     R0, #SIGALRM       ; Check if it's SIGALRM (14)
+		CMP     R0, #SIGALRM      
 		BNE     not_sigalrm
 		
 		LDR     R2, =USR_HANDLER
 		MOV		R3, R2
 		STR     R1, [R2]           
-		MOV     R0, R3          
+		MOV     R0, R3     
+		BX		LR
 		
 not_sigalrm
 		LDMFD	SP!, {R4-R12, LR}

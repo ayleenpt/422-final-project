@@ -93,7 +93,7 @@ alarm_call ; R0 gets overwritten here, it's supposed to stay as 0x00000002
 		POP     {R0}           ; Restore R0 before call
 		BX      R2 
 
-signal_call
+signal_call ; load signal address into R12, and jump to signal
 		LDR     R12, =0x20007B08
         LDR     R12, [R12]
         BX      R12
