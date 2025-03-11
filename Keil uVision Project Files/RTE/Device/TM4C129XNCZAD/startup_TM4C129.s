@@ -268,24 +268,24 @@ UsageFault_Handler\
                 B       .
                 ENDP
 SVC_Handler     PROC 		; (Step 2)
-				EXPORT  SVC_Handler               [WEAK]
-				IMPORT  _syscall_table_jump
-				
-				; Save registers
-				STMFD   SP!, {R4-R12, LR}
-				
-				; Invoke _syscall_table_jump
-				BL		_syscall_table_jump
-				
-				; Retrieve registers
-				LDMFD	SP!, {R4-R12, LR}
-				
-				; Save returned value
-				MOV		R4, R0
-				
-				; Go back to stdlib.s
-				BX		LR
-				ENDP
+                EXPORT  SVC_Handler               [WEAK]
+                IMPORT  _syscall_table_jump
+
+                ; Save registers
+                STMFD   SP!, {R4-R12, LR}
+
+                ; Invoke _syscall_table_jump
+                BL		_syscall_table_jump
+
+                ; Retrieve registers
+                LDMFD	SP!, {R4-R12, LR}
+
+                ; Save returned value
+                MOV		R4, R0
+
+                ; Go back to stdlib.s
+                BX		LR
+                ENDP
 DebugMon_Handler\
                 PROC
                 EXPORT  DebugMon_Handler          [WEAK]
@@ -310,7 +310,13 @@ SysTick_Handler\
 				; Retrieve registers
 				LDMFD    SP!, {R4-R12, LR}
 				
-				; Change from MSP to PSP
+				; Change from MSP to PSP (not entirely sure about this)
+				LDR     R1, =__initial_user_sp  
+				MSR     PSP, R1                 
+				MOV     R1, #2                 
+				MSR     CONTROL, R1
+				ISB               
+				
 				; Go back to the user program
 				BX      LR
                 ENDP
