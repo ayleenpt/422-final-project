@@ -65,7 +65,7 @@ _malloc
 		
 		; resume registers
 		LDMFD	SP!, {R4-R12, LR}
-		BX		LR ;;;;;;; CHANGED FROM MOV LR PC
+		BX		LR
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; void _free( void* addr )

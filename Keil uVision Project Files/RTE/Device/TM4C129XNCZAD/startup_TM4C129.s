@@ -274,9 +274,6 @@ SVC_Handler     PROC 		; (Step 2)
 				; Save registers
 				STMFD   SP!, {R4-R12, LR}
 				
-				; Load SVC number
-				MOV     R0, R7
-				
 				; Invoke _syscall_table_jump
 				BL		_syscall_table_jump
 				
