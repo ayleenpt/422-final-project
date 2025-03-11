@@ -310,7 +310,10 @@ SysTick_Handler\
 				; Retrieve registers
 				LDMFD    SP!, {R4-R12, LR}
 				
-				; Change from MSP to PSP
+				; Change from MSP to PSP (not entirely sure about this)
+				LDR     R1, =__initial_sp
+				MSR     MSP, R1             
+				
 				; Go back to the user program
 				BX      LR
                 ENDP

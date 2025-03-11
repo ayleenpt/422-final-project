@@ -86,15 +86,17 @@ _syscall_table_jump
 ; No match found or R7=0, just return
 		B       exit
 		
-alarm_call
+alarm_call ; R0 gets overwritten here, it's supposed to stay as 0x00000002
+		PUSH    {R0}           ; Save R0 (seconds parameter)
 		LDR     R1, =0x20007B04
-		LDR     R0, [R1]
-		BX     R0
+		LDR     R2, [R1]       ; Load function address
+		POP     {R0}           ; Restore R0 before call
+		BX     R2 
 
 signal_call
 		LDR     R12, =0x20007B08
         LDR     R12, [R12]
-        BX     R12
+        BX      R12
 
 malloc_call
 		LDR     R1, =0x20007B10

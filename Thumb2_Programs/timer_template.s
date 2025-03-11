@@ -25,7 +25,7 @@ _timer_init
 	; Implement by yourself
 			STMFD   SP!, {R4-R12, LR}
 			LDR     R1, =STCTRL
-			LDR     R0, #STCTRL_STOP  ; Disable timer
+			MOV     R0, #STCTRL_STOP  ; Disable timer
 			STR     R0, [R1]
 
 			LDR     R1, =STRELOAD
@@ -52,11 +52,11 @@ _timer_start
 			
 			; start systick timer by writing STCTRL_GO to STCTRL
 			LDR		R2, =STCTRL
-			LDR		R2, #STCTRL_GO
+			MOV		R2, #STCTRL_GO
 			
 			; clear current value register by loading STCURRENT and writing STCURR_CLR into it
 			LDR		R3, =STCURRENT
-			LDR		R4, #STCURR_CLR
+			MOV		R4, #STCURR_CLR
 			
 			LDMFD	SP!, {R4-R12, LR}
 			BX		LR
