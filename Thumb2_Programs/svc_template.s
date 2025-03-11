@@ -80,7 +80,7 @@ _syscall_table_jump
 
 		; Restore registers and return
 		LDMFD	SP!, {R4-R12, LR}
-		BX		LR
+		MOV		PC, LR
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; idk what's going on with these two lol

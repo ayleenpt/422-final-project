@@ -63,6 +63,9 @@ _malloc
 		MOV		R7, #4
 		SVC     #0x4
 		
+		; retrieve returned value
+		MOV		R0, R4
+		
 		; resume registers
 		LDMFD	SP!, {R4-R12, LR}
 		BX		LR

@@ -280,6 +280,9 @@ SVC_Handler     PROC 		; (Step 2)
 				; Retrieve registers
 				LDMFD	SP!, {R4-R12, LR}
 				
+				; Save returned value
+				MOV		R4, R0
+				
 				; Go back to stdlib.s
 				BX		LR
 				ENDP
