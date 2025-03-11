@@ -91,7 +91,7 @@ alarm_call ; R0 gets overwritten here, it's supposed to stay as 0x00000002
 		LDR     R1, =0x20007B04
 		LDR     R2, [R1]       ; Load function address
 		POP     {R0}           ; Restore R0 before call
-		BX     R2 
+		BX      R2 
 
 signal_call
 		LDR     R12, =0x20007B08
@@ -101,7 +101,7 @@ signal_call
 malloc_call
 		LDR     R1, =0x20007B10
 		LDR     R0, [R1]
-		BX     R0
+		BX      R0
 
 free_call
 		LDR     R1, =0x20007B14
