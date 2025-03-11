@@ -70,18 +70,60 @@ _syscall_table_jump
 		; Save registers
 		STMFD   SP!, {R4-R12, LR}
 
-		; Load the system call number from R0
-		LDR     R1, =SYSTEMCALLTBL    ; Load the base address of the system call table
-		LSL     R0, R0, #2            ; Multiply the system call number by 4 (each entry is 4 bytes)
-		ADD     R1, R1, R0            ; Calculate the address of the system call table entry
-		LDR     R1, [R1]              ; Load the address of the function from the system call table
+;		; Load the system call number from R0
+;		MOV		R0, R7					; use r7 to get sys call number, here we assume we would get it bc R7 is specifically meant for this stuff
+;		LDR     R1, =SYSTEMCALLTBL    ; Load the base address of the system call table
+;		LSL     R0, R0, #2            ; Multiply the system call number by 4 (each entry is 4 bytes)
+;		ADD     R1, R1, R0            ; Calculate the address of the system call table entry
+;		LDR     R0, [R1]              ; Load the address of the function from the system call table ; changed from R1 to R0
 
-		; Jump to the function
-		BLX     R1                    ; Branch with link and exchange (call the function)
+;		; Jump to the function
+;		BLX     R0                   ; Branch with link and exchange (call the function) ; changed from R1 to R0
 
-		; Restore registers and return
-		LDMFD	SP!, {R4-R12, LR}
-		BX		LR
+;		; Restore registers and return
+;		LDMFD	SP!, {R4-R12, LR}
+;		BX		LR
+		
+
+		; check R7 for what system call # we get, could this be why malloc isnt working? it might be because it's just never called
+		CMP     R7, #1
+		BEQ     alarm_call
+				
+		CMP     R7, #2
+		BEQ     signal_call
+				
+		CMP     R7, #4
+		BEQ     malloc_call
+				
+		CMP     R7, #5
+		BEQ     free_call
+		
+; No match found or R7=0, just return
+		B       exit
+		
+alarm_call
+		LDR     R1, =0x20007B04
+		LDR     R0, [R1]
+		BLX     R0
+
+signal_call
+		LDR     R1, =0x20007B08
+		LDR     R0, [R1]
+		BLX     R0
+
+malloc_call
+		LDR     R1, =0x20007B10
+		LDR     R0, [R1]
+		BLX     R0
+
+free_call
+		LDR     R1, =0x20007B14
+		LDR     R0, [R1]
+		BLX     R0
+
+exit
+		LDMFD   SP!, {R4-R12, LR}
+		BX      LR
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; idk what's going on with these two lol
