@@ -3,13 +3,13 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; System Call Table
-SYSTEMCALLTBL	EQU		0x20007B00 ; originally 0x20007500
-SYS_EXIT		EQU		0x0		; address 20007B00
-SYS_ALARM		EQU		0x1		; address 20007B04
-SYS_SIGNAL		EQU		0x2		; address 20007B08
-SYS_MEMCPY		EQU		0x3		; address 20007B0C
-SYS_MALLOC		EQU		0x4		; address 20007B10
-SYS_FREE		EQU		0x5		; address 20007B14
+SYSTEMCALLTBL	EQU		0x20007B00	; originally 0x20007500
+SYS_EXIT		EQU		0x0			; address 20007B00
+SYS_ALARM		EQU		0x1			; address 20007B04
+SYS_SIGNAL		EQU		0x2			; address 20007B08
+SYS_MEMCPY		EQU		0x3			; address 20007B0C
+SYS_MALLOC		EQU		0x4			; address 20007B10
+SYS_FREE		EQU		0x5			; address 20007B14
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; System Call Table Initialization
@@ -69,48 +69,18 @@ _syscall_table_init
 _syscall_table_jump
 		; Save registers
 		STMFD   SP!, {R4-R12, LR}
-		
-		; check R7 for what system call # we get, could this be why malloc isnt working? it might be because it's just never called
-		CMP     R7, #1
-		BEQ     alarm_call
-				
-		CMP     R7, #2
-		BEQ     signal_call
-				
-		CMP     R7, #4
-		BEQ     malloc_call
-				
-		CMP     R7, #5
-		BEQ     free_call
-		
-; No match found or R7=0, just return
-		B       exit
-		
-alarm_call ; R0 gets overwritten here, it's supposed to stay as 0x00000002
-		PUSH    {R0}           ; Save R0 (seconds parameter)
-		LDR     R1, =0x20007B04
-		LDR     R2, [R1]       ; Load function address
-		POP     {R0}           ; Restore R0 before call
-		BX      R2 
 
-signal_call ; load signal address into R12, and jump to signal
-		LDR     R12, =0x20007B08
-        LDR     R12, [R12]
-        BX      R12
+		LDR     R8, =SYSTEMCALLTBL    ; Load the base address of the system call table
+		LSL     R7, R7, #2            ; Multiply the system call number by 4 (each entry is 4 bytes)
+		ADD     R8, R8, R7            ; Calculate the address of the system call table entry
+		LDR     R9, [R8]              ; Load the address of the function into R2
 
-malloc_call
-		LDR     R1, =0x20007B10
-		LDR     R0, [R1]
-		BX      R0
+		; Jump to the function
+		BLX     R9                   ; Branch with link and exchange
 
-free_call
-		LDR     R1, =0x20007B14
-		LDR     R0, [R1]
-		BX     R0
-
-exit
-		LDMFD   SP!, {R4-R12, LR}
-		BX      LR
+		; Restore registers and return
+		LDMFD	SP!, {R4-R12, LR}
+		MOV		PC, LR
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; idk what's going on with these two lol
