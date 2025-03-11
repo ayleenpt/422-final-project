@@ -312,7 +312,7 @@ SysTick_Handler\
 				
 				; Change from MSP to PSP (not entirely sure about this)
 				LDR     R1, =__initial_user_sp  
-				MSR     PSP, R1                 
+				; MSR     PSP, R1                 
 				MOV     R1, #2                 
 				MSR     CONTROL, R1
 				ISB               

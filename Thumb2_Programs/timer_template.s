@@ -52,11 +52,13 @@ _timer_start
 			
 			; start systick timer by writing STCTRL_GO to STCTRL
 			LDR		R2, =STCTRL
-			MOV		R2, #STCTRL_GO
+			MOV		R5, #STCTRL_GO
+			STR		R5, [R2]
 			
 			; clear current value register by loading STCURRENT and writing STCURR_CLR into it
 			LDR		R3, =STCURRENT
 			MOV		R4, #STCURR_CLR
+			STR		R4, [R3]
 			
 			LDMFD	SP!, {R4-R12, LR}
 			BX		LR
@@ -73,19 +75,20 @@ _timer_update
 		
 		; read value at SECOND_LEFT
 		LDR		R0, =SECOND_LEFT
+		LDR		R1, [R0]
 		
 		; decrement
-		SUB		R0, R0, #1
+		SUB		R1, R1, #1
+		STR		R1, [R0] ; store contents of R1 into 
 		
 		; if value hasn't reached 0, branch to timer update done
-		CMP		R0, #0
+		CMP		R1, #0
 		BNE		_timer_update_done
 		
 		; value has reached 0, stop timer
 		BEQ		_timer_stop
 
 _timer_update_done ; return to wherever it was called here
-		POP     {R4, LR}
 		LDMFD	SP!, {R4-R12, LR}
 		BLX		LR		; return to SysTick_Handler
 
