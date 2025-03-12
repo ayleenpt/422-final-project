@@ -32,29 +32,29 @@ int main( ) {
 	void* mem6 = _malloc( 1024 );
 	void* mem7 = _malloc( 512 );
 	_free( mem6 );
-//	_free( mem5 );
-//	_free( mem1 );
-//	_free( mem7 );
-//	_free( mem2 );
-//	void* mem8 = _malloc( 4096 );
-//	_free( mem4 );
-//	_free( mem3 );
-//	_free( mem8 );
-//	
-//	alarmed = (int *)_malloc( 4 );
-//	*alarmed = 1;
+	_free( mem5 );
+	_free( mem1 );
+	_free( mem7 );
+	_free( mem2 );
+	void* mem8 = _malloc( 4096 );
+	_free( mem4 );
+	_free( mem3 );
+	_free( mem8 );
+	
+	alarmed = (int *)_malloc( 4 );
+	*alarmed = 1;
 	_signal( SIG_ALRM, sig_handler1 );
 	_alarm( 2 );
-//	while ( *alarmed != 2 ) {
-//		void* mem9 = _malloc( 4 );	
-//		_free( mem9 );		
-//	}
+	while ( *alarmed != 2 ) {
+		void* mem9 = _malloc( 4 );	
+		_free( mem9 );		
+	}
 	
-//	_signal( SIG_ALRM, sig_handler2 );
-//	_alarm( 3 );
-//	while ( *alarmed != 3 ) {
-//		void* mem9 = _malloc( 4 );	
-//		_free( mem9 );
-//	}
+	_signal( SIG_ALRM, sig_handler2 );
+	_alarm( 3 );
+	while ( *alarmed != 3 ) {
+		void* mem9 = _malloc( 4 );	
+		_free( mem9 );
+	}
 	return 0;
 }

@@ -27,53 +27,32 @@ Project File Date:  03/10/2025
 <h2>Output:</h2>
 *** Using Compiler 'V6.22', folder: 'C:\Users\brook\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin'
 Rebuild target 'Target_1'
-assembling stdlib_template.s...
-"../Thumb2_Programs/svc_template.s", line 93: Warning: A1581W: Added 2 bytes of padding at address 0x6a
-   93 0000006c   END
-0 Errors, 1 Warning
-assembling svc_template.s...
 "../Thumb2_Programs/timer_template.s", line 130: Warning: A1581W: Added 2 bytes of padding at address 0x76
   130 00000078   END
 0 Errors, 1 Warning
 assembling timer_template.s...
+compiling system_TM4C129.c...
 ../C_Programs/driver_keil.c(13): warning: unused parameter 'signum' [-Wunused-parameter]
    13 | void sig_handler1( int signum ) {
       |                        ^
 ../C_Programs/driver_keil.c(17): warning: unused parameter 'signum' [-Wunused-parameter]
    17 | void sig_handler2( int signum ) {
       |                        ^
-../C_Programs/driver_keil.c(27): warning: unused variable 'mem1' [-Wunused-variable]
-   27 |         void* mem1 = _malloc( 8192 );
-      |               ^~~~
-../C_Programs/driver_keil.c(28): warning: unused variable 'mem2' [-Wunused-variable]
-   28 |         void* mem2 = _malloc( 8192 );
-      |               ^~~~
-../C_Programs/driver_keil.c(29): warning: unused variable 'mem3' [-Wunused-variable]
-   29 |         void* mem3 = _malloc( 4096 );
-      |               ^~~~
-../C_Programs/driver_keil.c(30): warning: unused variable 'mem4' [-Wunused-variable]
-   30 |         void* mem4 = _malloc( 4096 );
-      |               ^~~~
-../C_Programs/driver_keil.c(31): warning: unused variable 'mem5' [-Wunused-variable]
-   31 |         void* mem5 = _malloc( 512 );
-      |               ^~~~
-../C_Programs/driver_keil.c(32): warning: unused variable 'mem6' [-Wunused-variable]
-   32 |         void* mem6 = _malloc( 1024 );
-      |               ^~~~
-../C_Programs/driver_keil.c(33): warning: unused variable 'mem7' [-Wunused-variable]
-   33 |         void* mem7 = _malloc( 512 );
-      |               ^~~~
-9 warnings generated.
+2 warnings generated.
 compiling driver_keil.c...
-compiling system_TM4C129.c...
+assembling stdlib_template.s...
+assembling startup_TM4C129.s...
 "../Thumb2_Programs/heap_template.s", line 268: Warning: A1313W: Missing END directive at end of file
   268 000001a4 
 0 Errors, 1 Warning
 assembling heap_template.s...
-assembling startup_TM4C129.s...
+"../Thumb2_Programs/svc_template.s", line 93: Warning: A1581W: Added 2 bytes of padding at address 0x6a
+   93 0000006c   END
+0 Errors, 1 Warning
+assembling svc_template.s...
 linking...
-Program Size: Code=1760 RO-data=544 RW-data=4 ZI-data=24680  
-".\Objects\422-final-project.axf" - 0 Error(s), 9 Warning(s).
+Program Size: Code=1956 RO-data=544 RW-data=4 ZI-data=24680  
+".\Objects\422-final-project.axf" - 0 Error(s), 2 Warning(s).
 
 <h2>Software Packages used:</h2>
 
