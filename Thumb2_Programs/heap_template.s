@@ -156,32 +156,33 @@ _kfree
 		; validate the address
 		LDR		R4, =HEAP_TOP
 		LDR		R5, =HEAP_BOT
-		CMP		R0,	R4				; check if ptr < HEAP_TOP
-		BLT		_kfree_invalid		; if yes, return NULL
-		CMP		R0, R5				; check if ptr > HEAP_BOT
-		BGT		_kfree_invalid		; if yes return NULL
+		CMP		R0,	R4				; return INVALID if ptr < HEAP_TOP
+		BLT		_kfree_invalid
+		CMP		R0, R5				; return INVALID if ptr > HEAP_BOT
+		BGT		_kfree_invalid
 		
 		; compute the MCB address corresponding to the address to be deleted
 		LDR		R6, =MCB_TOP
 		SUB		R7, R0, R4			; R7 = addr - HEAP_TOP
-		LSR		R7, R7, #4			; R7 = (add - HEAP_TOP) / 16
-		ADD		R7, R6, R7			; R7 = MCB_TOP + (addr - HEAP_TOP) / 16
+		LSR		R7, R7, #4			; R7 = (addr - HEAP_TOP) / 16
+		ADD		R7, R7, R6			; R7 = MCB_TOP + (addr - HEAP_TOP) / 16
 		
 		; call rfree to deallocate the memory
 		MOV		R0, R7				; pass MCB address as argument
 		BL		_rfree
 		
-		; check if _rfree succeeded
-		CMP		R0, #0
-		BEQ		_kfree_invalid		; if _rfree returned 0, return NULL
+		; return #0 if _rfree failed
+		MOV		R0, R8
+		CMP		R0, #INVALID
+		BNE		_kfree_done
 		
-		; resume registers
-		LDMFD	SP!, {R4-R12, LR}
-		MOV     PC, LR
 		
 _kfree_invalid
 		; return NULL
 		MOV		R0, #0
+		
+_kfree_done
+		; resume registers & return
 		LDMFD	SP!, {R4-R12, LR}
 		MOV     PC, LR
 		
@@ -192,74 +193,71 @@ _rfree
 		; save registers
 		STMFD   SP!, {R4-R12, LR}
 		
-		; load MCB contents
-		LDRH	R4, [R0]			; R4 =( short* )&array[ m2a( mcb_addr ) ] )
-		BIC		R4, R4, #0x01		; clear the used bit
-		STRH	R4, [R0]			; update MCB entry
+		LDR		R9, =MCB_TOP
+		LDRH	R1, [R0]			; load mcb_contents
+		SUB		R2, R0, R9			; mcb_offset = mcb_addr - mcb_top
+		LSR		R1, R1, #4			; div mcb_contents by 16
+		MOV		R3, R1				; mcb_chunk = mcb_contents
+		LSL		R1, R1, #4			; mult mcb_contents by 16, this clears the used bit
+		MOV		R4, R1				; my_size = mcb_contents
+		STRH	R1, [R0]			; store mcb_contents with used bit cleared
 		
-		; calculate MCB offset and chunk size
-		LDR		R5, =MCB_TOP
-		SUB		R6, R0, R5			; R6 = mcb_offset = mcb_addr - MCB_TOP
-		LSR		R7, R4, #4			; R7 = mcb_chunk = mcb_contents / 16
-		LSL		R8, R7, #4			; R8 = my_size = mcb_chunk * 16
-		
-		; check if mcb_offset is left (even) or right (odd)
-		UDIV	R9, R6, R7			; R9 = mcb_offset / mcb_chunk
-		TST		R9, #0x01			; check if R9 is odd
-		BNE		_rfree_right		; if odd, handle right case
+		UDIV	R9, R2, R3			; left_or_right = mcb_offset / mcb_chunk
+		TST		R9, #0x01			; left == 0 right == 1
+		BNE		_rfree_right
 		
 _rfree_left
-		; handle left case
-		ADD		R10, R0, R7			; R10 = mcb_addr + mcb_chunk (buddy address)
-		LDR		R11, =MCB_BOT
-		CMP		R10, R11
-		BHS		_rfree_done			; if buddy is beyond MCB_BOT, return mcb_addr
+		ADD		R5, R0, R3			; buddy = mcb_addr + mcb_chunk
 		
-		; check if buddy is free and has the same size
-		LDRH	R12, [R10]			; R12 = mcb_buddy contents
-		TST		R12, #0x01			; check if buddy is used
-		BNE		_rfree_done			; if used, return mcb_addr
+		LDR		R9, =MCB_BOT		; return INVALID if buddy >= HEAP_BOT
+		CMP		R5, R9
+		BGE		_rfree_invalid
 		
-		BIC		R12, R12, #0x1F		; clear bits 4-0 (size only)
-		CMP		R12, R8				; check if buddy size == my_size
-		BNE		_rfree_done			; if not, return mcb_addr
+		LDRH	R9, [R5]			; return mcb_addr if buddy is marked as used
+		TST		R9, #0x01			; 1 == used 0 == free
+		BNE		_rfree_done
 		
-		; merge buddy into self
-		MOV		R12, #0				; clear buddy
-		STRH	R12, [R10]
-		LSL		R8, R8, #1			; double size
-		STRH	R8, [R0]			; update size
+		; mcb_buddy = ( mcb_buddy / 32 ) * 32 to clear bits 4-0
+		LSR		R5, R5, #5			; div by 32
+		LSL		R5, R5, #5			; mult by 32
 		
-		; promote self
-		B		_rfree
+		CMP		R5, R4				; return mcb_addr if buddy != my_size
+		BNE		_rfree_done
+		
+		MOV		R9, #0
+		STRH	R9, [R5]			; clear buddy
+		LSL		R4, R4, #1			; double my size
+		STRH	R4, [R5]			; merge buddy
+		BL		_rfree				; promote myself
 		
 _rfree_right
-		; handle right case
+		SUB		R5, R0, R3			; buddy = mcb_addr - mcb_chunk
 		
-		;check if buddy is below MCB_TOP
-		SUB		R10, R0, R7			; R10 = mcb_addr - mcb_chunk (buddy address)
-		LDR		R11, =MCB_TOP
-		CMP		R10, R11
-		BLO		_rfree_done			; if buddy is below MCB_TOP, return mcb_addr
+		LDR		R9, =MCB_TOP		; return INVALID if buddy < MCB_TOP
+		CMP		R5, R9
+		BLT		_rfree_invalid
 		
-		; check if buddy is free and has the same size
-		LDRH	R12, [R10]			; R12 = mcb_buddy contents
-		TST		R12, #0x01			; check if buddy is used
-		BNE		_rfree_done			; ; if not, return mcb_addr
+		LDRH	R9, [R5]			; return mcb_addr if buddy is marked as used
+		TST		R9, #0x01			; 1 == used 0 == free
+		BNE		_rfree_done
 		
-		; merge self into buddy
-		MOV		R12, #0				; clear self
-		STRH	R12, [R0]
-		LSL		R8, R8, #1			; double size
-		STRH	R8, [R10]			; update buddy size
+		; mcb_buddy = ( mcb_buddy / 32 ) * 32 to clear bits 4-0
+		LSR		R5, R5, #5			; div by 32
+		LSL		R5, R5, #5			; mult by 32
 		
-		; promote buddy
-		MOV		R0, R10				; pass buddy address as arg
-		B		_rfree
+		CMP		R5, R4				; return mcb_addr if buddy != my_size
+		BNE		_rfree_done
+		
+		MOV		R9, #0
+		STRH	R9, [R0]			; clear myself
+		LSL		R4, R4, #1			; double my size
+		STRH	R4, [R0, R3]		; merge me to buddy
+		SUB		R0, R0, R3			; promote buddy
+		BL		_rfree
+
+_rfree_invalid
+		MOV		R0, #INVALID
 		
 _rfree_done
-		; return mcb_addr
 		LDMFD	SP!, {R4-R12, LR}
-		MOV     PC, LR
-		
-		END
+		MOV		PC, LR
