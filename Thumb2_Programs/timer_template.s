@@ -95,8 +95,8 @@ _timer_update_done ; return to wherever it was called here
 _timer_stop ;;;;; issue here
 		; load user function into R1
 		LDR		R1, =USR_HANDLER
+		LDR		R1, [R1]
 		
-		LDMFD	SP!, {R4-R12, LR}
 		; stop timer by writing STCTRL_STOP to STCTRL register
 		; load both values into register or otherwise the thing complains
 		MOV		R2, #STCTRL_STOP
@@ -104,30 +104,54 @@ _timer_stop ;;;;; issue here
 		STR		R2, [R3]
 		
 		; branch and link
+		LDMFD	SP!, {R4-R12, LR}
 		; stores where program is currently at in LR, then it calls function. so when we return to the callee, we know where to go.
-		BX		R1
+		BLX		R1
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Timer update
 ; void* signal_handler( int signum, void* handler )
 	    EXPORT	_signal_handler
 _signal_handler
-     PUSH    {R4, LR}            ; Save registers we use
+ 	; Implement by yourself
+ 		STMFD   SP!, {R4-R12, LR}
+		
+		CMP     R0, #SIGALRM      
+		BNE     not_sigalrm
+		
+		LDR     R2, =USR_HANDLER
+		LDR		R3, [R2]
+		STR     R1, [R2]  
+		
+		MOV     R0, R3  
+		
+		BX		LR
+		
+not_sigalrm
+		LDMFD	SP!, {R4-R12, LR}
+		BX      LR                ; Use BX instead of MOV pc, lr
+		
+;_signal_handler
+;		STMFD   SP!, {R4-R12, LR}          ; Save registers we use
 
-        CMP     R0, #14             ; Compare signum with SIGALRM (14)
-        BNE     not_sigalrm         ; If not SIGALRM, return 0
+;        CMP     R0, #14             ; Compare signum with SIGALRM (14)
+;        BNE     not_sigalrm         ; If not SIGALRM, return 0
 
-        LDR     R2, =USR_HANDLER     ; Get pointer to USR_HANDLER
-        LDR     R4, [R2]            ; Load previous handler from USR_HANDLER
-        STR     R1, [R2]            ; Store new handler into USR_HANDLER
-        MOV     R0, R4              ; Set return value to previous handler
-        B       done_signal
+;        LDR     R2, =USR_HANDLER     ; Get pointer to USR_HANDLER
+;        LDR     R4, [R2]            ; Load previous handler from USR_HANDLER
+;        STR     R1, [R2]            ; Store new handler into USR_HANDLER
+;        ; MOV     R0, R4              ; Set return value to previous handler
+;		
+;        B       done_signal
 
-not_sigalrm     
-        MOV     R0, #0              ; For non-SIGALRM, return 0
-		B 		done_signal
+;not_sigalrm     
+;        MOV     R0, #0              ; For non-SIGALRM, return 0
+;;		POP     {R4, LR}
+;		LDMFD	SP!, {R4-R12, LR}
+;		BX		LR
 
-done_signal
-        POP     {R4, LR}            ; Restore registers
-        BX      LR                  ; Return to caller
+;done_signal
+;;        POP     {R4, LR}            ; Restore registers
+;		LDMFD	SP!, {R4-R12, LR}
+;        BX      LR                  ; Return to caller
 		END
