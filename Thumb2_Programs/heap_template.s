@@ -107,8 +107,10 @@ _ralloc_left
 		
 		; if ralloc left failed, try ralloc right
 _ralloc_right
+		PUSH	{R0-R7, LR}			; store sizes for current invocation
 		MOV		R1, R5				; left = midpoint
 		BL		_ralloc				; ralloc(size, midpoint, right)
+		POP		{R0-R7, LR}			; restore sizes
 		
 _split_parent_mcb
 		LDRH	R9, [R5]			; check if midpoint is marked as used
