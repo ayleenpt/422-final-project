@@ -92,19 +92,20 @@ _timer_update_done ; return to wherever it was called here
 		LDMFD	SP!, {R4-R12, LR}
 		BLX		LR		; return to SysTick_Handler
 
-_timer_stop
+_timer_stop ;;;;; issue here
 		; load user function into R1
 		LDR		R1, =USR_HANDLER
 		
+		LDMFD	SP!, {R4-R12, LR}
 		; stop timer by writing STCTRL_STOP to STCTRL register
 		; load both values into register or otherwise the thing complains
-		LDR		R2, =STCTRL_STOP
+		MOV		R2, #STCTRL_STOP
 		LDR		R3, =STCTRL
 		STR		R2, [R3]
 		
 		; branch and link
 		; stores where program is currently at in LR, then it calls function. so when we return to the callee, we know where to go.
-		BLX		R1
+		BX		R1
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Timer update
