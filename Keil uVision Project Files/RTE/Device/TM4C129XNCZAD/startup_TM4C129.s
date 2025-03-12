@@ -310,11 +310,11 @@ SysTick_Handler\
 				; Retrieve registers
 				LDMFD    SP!, {R4-R12, LR}
 				
-				; Change from MSP to PSP (not entirely sure about this)
-				LDR     R1, =__initial_user_sp  
+				; Change from MSP to PSP (not entirely sure about this) ; made changes here, from R1 to R2
+				LDR     R2, =__initial_user_sp  
 				; MSR     PSP, R1                 
-				MOV     R1, #2                 
-				MSR     CONTROL, R1
+				MOV     R2, #2                 
+				MSR     CONTROL, R2
 				ISB               
 				
 				; Go back to the user program

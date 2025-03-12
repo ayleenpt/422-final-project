@@ -61,7 +61,7 @@ _syscall_table_init
 
 		; Restore registers and return
 		LDMFD	SP!, {R4-R12, LR}
-		MOV     PC, LR
+		BX		LR
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; System Call Table Jump Routine
@@ -80,7 +80,7 @@ _syscall_table_jump
 
 		; Restore registers and return
 		LDMFD	SP!, {R4-R12, LR}
-		MOV		PC, LR
+		BX		LR
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; idk what's going on with these two lol
