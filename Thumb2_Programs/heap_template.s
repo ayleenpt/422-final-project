@@ -158,28 +158,26 @@ _kfree
 		STMFD   SP!, {R4-R12, LR}
 		
 		; validate the address
-		LDR		R4, =HEAP_TOP
-		LDR		R5, =HEAP_BOT
-		CMP		R0,	R4				; return INVALID if ptr < HEAP_TOP
+		LDR		R1, =HEAP_TOP
+		LDR		R2, =HEAP_BOT
+		CMP		R0,	R1				; return INVALID if ptr < HEAP_TOP
 		BLT		_kfree_invalid
-		CMP		R0, R5				; return INVALID if ptr > HEAP_BOT
+		CMP		R0, R2				; return INVALID if ptr > HEAP_BOT
 		BGT		_kfree_invalid
 		
 		; compute the MCB address corresponding to the address to be deleted
-		LDR		R6, =MCB_TOP
-		SUB		R7, R0, R4			; R7 = addr - HEAP_TOP
-		LSR		R7, R7, #4			; R7 = (addr - HEAP_TOP) / 16
-		ADD		R7, R7, R6			; R7 = MCB_TOP + (addr - HEAP_TOP) / 16
+		; mcb_addr = MCB_TOP + (addr - HEAP_TOP) / 16
+		LDR		R3, =MCB_TOP
+		SUB		R0, R0, R1			; mcb_addr = addr - HEAP_TOP
+		LSR		R0, R0, #4			; mcb_addr = mcb_addr / 16
+		ADD		R0, R0, R3			; mcb_addr = mcb_addr + MCB_TOP
 		
 		; call rfree to deallocate the memory
-		MOV		R0, R7				; pass MCB address as argument
 		BL		_rfree
 		
 		; return #0 if _rfree failed
-		MOV		R0, R8
 		CMP		R0, #INVALID
 		BNE		_kfree_done
-		
 		
 _kfree_invalid
 		; return NULL
@@ -196,7 +194,7 @@ _kfree_done
 _rfree
 		; save registers
 		STMFD   SP!, {R4-R12, LR}
-		
+
 		LDR		R9, =MCB_TOP
 		LDRH	R1, [R0]			; load mcb_contents
 		SUB		R2, R0, R9			; mcb_offset = mcb_addr - mcb_top
@@ -205,7 +203,7 @@ _rfree
 		LSL		R1, R1, #4			; mult mcb_contents by 16, this clears the used bit
 		MOV		R4, R1				; my_size = mcb_contents
 		STRH	R1, [R0]			; store mcb_contents with used bit cleared
-		
+
 		UDIV	R9, R2, R3			; left_or_right = mcb_offset / mcb_chunk
 		TST		R9, #0x01			; left == 0 right == 1
 		BNE		_rfree_right
