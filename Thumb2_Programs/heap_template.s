@@ -83,76 +83,56 @@ _ralloc
 		STMFD   SP!, {R4-R12, LR}
 		
 		; calculate entire, half, midpoint, and heap address
-		SUB		R3, R2, R1			; entire = right - left
-		ADD		R3, R3, #MCB_ENT_SZ	; entire += MCB_ENT_SZ
+		SUB		R3, R2, R1			; entire = right - left + mcb_ent_size
+		ADD		R3, R3, #MCB_ENT_SZ
 		LSR		R4, R3, #1			; half = entire / 2
 		ADD		R5, R1, R4			; midpoint = left + half
+		MOV		R6, #0				; heap_addr = 0 for now
 		
 		; calculate actual sizes
-		LSL		R6, R3, #4			; actual entire size = entire * 16
-		LSL		R7, R4, #4			; actual half size = half * 16
+		LSL		R7, R3, #4			; act_entire_size = entire * 16
+		LSL		R8, R4, #4			; act_half_size = half * 16
 		
-		;  check if size <= actual half size
-		CMP		R0, R7
-		BHI		_allocate_entire
+		CMP		R0, R8				; compare size & act_half_size
+		BGT		_find_entire_space	; branch if size > act_half_size
 		
-		; recursively allocate left half
-		SUB		R2, R5, #MCB_ENT_SZ	; right = midpoint - MCB_ENT_SZ
-		BL		_ralloc
-		CMP		R0, #INVALID		; check if left half allocation failed
-		BNE		_split_parent_mcb	; if succesful, split the parent MCB
+		; ralloc left
+		MOV		R2, R5, #MCB_ENT_SZ ; set right to midpoint - mcb_ent_size
+		BL		_ralloc				; ralloc(size, left, (midpoint - mcb_ent_sz) )
+		MOV		R6, R0				; update heap_addr with value returned from ralloc
+		;; not sure if this is correct lol the returns are throwing me off
 		
-		; recursively allocate right half
-		MOV		R1, R5				; left = midpoint
-		LDR		R2, =MCB_BOT		; right = MCB_BOT
-		BL		_ralloc
-		B		_return_heap_addr	; return the results of the right half allocation
-
+		CMP		R6, #0				; check if heap_addr uninitialized after ralloc left
+		BNE		_split_parent_mcb	; branch if not empty
+		
+		; ralloc right
+		MOV		R1, R5				; set left to midpoint
+		BL		_ralloc				; ralloc(size, midpoint, right)
+		
 _split_parent_mcb
-		; check if midpoint is not marked as used
-		LDRH	R3, [R5]
-		TST		R3, #0x01
-		BNE     _return_invalid
+		AND		R9, [R5], #0x01		; check if available
+		CMP		R9, #0
+		BNE		_find_entire_space	; branch if not available
 		
-		BIC		R7, R7, #0x01       ; clear LSB (ensure size is even)
-		ORR		R3, R7, #0x01		; mark midpoint as used with actual half size
-		STRH	R3, [R5]			; store the updated MCB entry
+		STRH	R7, [R5]			; store act_half_size in midpoint address
+		BL		_return_heap_addr
 		
-		B		_return_heap_addr
+_find_entire_space
+		AND		R9, [R1], #0x01		; check if available
+		CMP		R9, #0
+		BNE		_return_invalid		; branch if not available
 		
-_allocate_entire
-		; check if left is marked as used
-		LDRH	R3, [R1]
-		TST		R3, #0x01
-		BNE		_return_invalid
+		LDRH	R9, [R1]			; size_available = half-word from left address
+		CMP		R9, R7				; compare size_available and act_entire_size
+		BLT		_return_invalid		; branch if not enough size
 		
-		; check if size fits in the entire block
-		CMP		R6, R0
-		BLO		_return_invalid
-		
-		BIC		R6, R6, #0x01       ; clear LSB (ensure size is even)
-		ORR		R3, R6, #0x01       ; mark left as used with actual entire size
-		STRH	R3, [R1]			; store the updated MCB entry
-		
-		B _return_heap_addr
+		ORR		R9, R7, #0x01		; mark midpoint as used
+		STRH	R9, [R5]
+		;; return heap_top + (left - mcb_top) * 16 idk
 		
 _return_heap_addr
-		; R0 = ((left - MCB_TOP) / 2) * 32 + HEAP_TOP
-		LDR		R3, =MCB_TOP
-		SUB		R0, R1, R3			; R0 = offset from MCB_TOP in bytes
-		LSR		R0, R0, #1			; R0 = offset in entries (divide by 2 = 2 bytes per entry)
-		LSL		R0, R0, #5			; R0 = offset in heap (mult by 32 = 32 byte allocation)
-		LDR		R3, =HEAP_TOP
-		ADD		R0, R0, R3
-		B		_ralloc_done
-		
+
 _return_invalid
-		MOV		R0, #INVALID
-		
-_ralloc_done
-		; resume registers
-		LDMFD	SP!, {R4-R12, LR}
-		MOV		PC, LR
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Kernel Memory De-allocation
