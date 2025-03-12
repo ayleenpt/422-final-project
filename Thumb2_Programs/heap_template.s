@@ -118,7 +118,7 @@ _ralloc_right
 _split_parent_mcb
 		LDRH	R9, [R5]			; check if midpoint is marked as used
 		TST		R9, #0x01
-		BNE		_allocate_entire	; branch if used
+		BNE		_return_heap_addr	; branch if used
 		
 		STRH	R7, [R5]			; store act_half_size in midpoint address
 		B		_return_heap_addr

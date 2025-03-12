@@ -27,9 +27,11 @@ Project File Date:  03/10/2025
 <h2>Output:</h2>
 *** Using Compiler 'V6.22', folder: 'C:\Users\brook\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin'
 Rebuild target 'Target_1'
+"../Thumb2_Programs/timer_template.s", line 130: Warning: A1581W: Added 2 bytes of padding at address 0x76
+  130 00000078   END
+0 Errors, 1 Warning
+assembling timer_template.s...
 assembling stdlib_template.s...
-compiling system_TM4C129.c...
-assembling heap_template.s...
 ../C_Programs/driver_keil.c(13): warning: unused parameter 'signum' [-Wunused-parameter]
    13 | void sig_handler1( int signum ) {
       |                        ^
@@ -59,10 +61,8 @@ assembling heap_template.s...
       |               ^~~~
 9 warnings generated.
 compiling driver_keil.c...
-"../Thumb2_Programs/timer_template.s", line 130: Warning: A1581W: Added 2 bytes of padding at address 0x76
-  130 00000078   END
-0 Errors, 1 Warning
-assembling timer_template.s...
+compiling system_TM4C129.c...
+assembling heap_template.s...
 "../Thumb2_Programs/svc_template.s", line 93: Warning: A1581W: Added 2 bytes of padding at address 0x6a
    93 0000006c   END
 0 Errors, 1 Warning
@@ -99,7 +99,7 @@ Package Vendor: Keil
       Include file:  Device/Include/TM4C129/TM4C129.h
       Source file:   Device/Source/ARM/startup_TM4C129.s
       Source file:   Device/Source/system_TM4C129.c
-Build Time Elapsed:  00:00:00
+Build Time Elapsed:  00:00:01
 </pre>
 </body>
 </html>
