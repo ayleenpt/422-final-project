@@ -31,7 +31,7 @@ int main( ) {
 	void* mem5 = _malloc( 512 );
 	void* mem6 = _malloc( 1024 );
 	void* mem7 = _malloc( 512 );
-//	_free( mem6 );
+	_free( mem6 );
 //	_free( mem5 );
 //	_free( mem1 );
 //	_free( mem7 );

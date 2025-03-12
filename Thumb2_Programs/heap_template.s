@@ -93,6 +93,8 @@ _ralloc
 		CMP		R0, R7				; compare size & act_half_size
 		BGT		_ralloc_full		; branch if size > act_half_size
 		
+		
+		
 		; if size can fit inside act_half_size
 _ralloc_left
 		PUSH	{R0-R7, LR}			; store sizes for current invocation
@@ -102,8 +104,8 @@ _ralloc_left
 		
 		POP		{R0-R7, LR}			; restore sizes
 	
-		CMP		R8, #INVALID		; check if ralloc left failed
-		BNE		_split_parent_mcb	; branch if succeeded
+		CMP		R8, #INVALID		; branch if ralloc left succeeded
+		BNE		_split_parent_mcb
 		
 		; if ralloc left failed, try ralloc right
 _ralloc_right
@@ -111,6 +113,8 @@ _ralloc_right
 		MOV		R1, R5				; left = midpoint
 		BL		_ralloc				; ralloc(size, midpoint, right)
 		POP		{R0-R7, LR}			; restore sizes
+		CMP		R8, #INVALID		; branch if ralloc right failed
+		BEQ		_return_invalid
 		
 _split_parent_mcb
 		LDRH	R9, [R5]			; check if midpoint is marked as used
