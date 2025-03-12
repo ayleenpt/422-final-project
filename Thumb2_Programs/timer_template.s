@@ -111,20 +111,22 @@ _timer_stop
 ; void* signal_handler( int signum, void* handler )
 	    EXPORT	_signal_handler
 _signal_handler
-	; Implement by yourself
-		STMFD   SP!, {R4-R12, LR}
-		
-		CMP     R0, #SIGALRM      
-		BNE     not_sigalrm
-		
-		LDR     R2, =USR_HANDLER
-		MOV		R3, R2
-		STR     R1, [R2]           
-		MOV     R0, R3     
-		BX		LR
-		
-not_sigalrm
-		LDMFD	SP!, {R4-R12, LR}
-		BX      LR                ; Use BX instead of MOV pc, lr
-		
+     PUSH    {R4, LR}            ; Save registers we use
+
+        CMP     R0, #14             ; Compare signum with SIGALRM (14)
+        BNE     not_sigalrm         ; If not SIGALRM, return 0
+
+        LDR     R2, =USR_HANDLER     ; Get pointer to USR_HANDLER
+        LDR     R4, [R2]            ; Load previous handler from USR_HANDLER
+        STR     R1, [R2]            ; Store new handler into USR_HANDLER
+        MOV     R0, R4              ; Set return value to previous handler
+        B       done_signal
+
+not_sigalrm     
+        MOV     R0, #0              ; For non-SIGALRM, return 0
+		B 		done_signal
+
+done_signal
+        POP     {R4, LR}            ; Restore registers
+        BX      LR                  ; Return to caller
 		END
