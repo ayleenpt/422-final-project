@@ -235,7 +235,7 @@ Reset_Handler   PROC
 				; Change CPU mode into unprivileged thread mode using PSP
 				MOV		R1, #0x3 ; load 0x3 into R1 to set CONTROL SPSEL field to select PSP and unprivileged mode
 				MSR  	CONTROL, R1 ; set the field inside of CONTROL (can only do using register, not immediate value)
-				ISB		; claude recommended, this is needed after changing CONTROL
+				ISB		
 
                 LDR     R0, =__main
                 BX      R0
