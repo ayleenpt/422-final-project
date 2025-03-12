@@ -26,13 +26,13 @@ _heap_init
 		
 _zero_heap_loop
 		CMP		R0, R1
-		BHS		_zero_heap_done		; done if R0 >= R1
+		BHS		_initialize_mcb		; done if R0 >= R1
 		
 		STR		R2, [R0], #4		; store 0 at the current address and increment R0 by 4
 		
 		B		_zero_heap_loop
 		
-_zero_heap_done
+_initialize_mcb
 		; initialize the MCB
 		LDR		R0, =MCB_TOP
 		LDR		R1, =MAX_SIZE
@@ -71,6 +71,8 @@ _kalloc
 		LDR     R2, =MCB_BOT        ; right
 		BL      _ralloc
 		
+		MOV		R0, R8
+		
 		; resume registers
 		LDMFD	SP!, {R4-R12, LR}
 		MOV     PC, LR
@@ -79,80 +81,67 @@ _kalloc
 ; Recursive Memory Allocation
 ; void* _ralloc( int size, int left, int right )
 _ralloc
-		; save registers
-		STMFD   SP!, {R4-R12, LR}
-		
-		; calculate entire, half, midpoint, and heap address
+		; calculate sizes
 		SUB		R3, R2, R1			; entire = right - left + mcb_ent_size
 		ADD		R3, R3, #MCB_ENT_SZ
 		LSR		R4, R3, #1			; half = entire / 2
 		ADD		R5, R1, R4			; midpoint = left + half
-		MOV		R6, #0				; heap_addr = 0 for now
+		LSL		R6, R3, #4			; act_entire_size = entire * 16
+		LSL		R7, R4, #4			; act_half_size = half * 16
+		MOV		R8, #0				; heap_addr = 0 to start
 		
-		; calculate actual sizes
-		LSL		R7, R3, #4			; act_entire_size = entire * 16
-		LSL		R8, R4, #4			; act_half_size = half * 16
-		
-		CMP		R0, R8				; compare size & act_half_size
-		BGT		_allocate_entire	; branch if size > act_half_size
+		CMP		R0, R7				; compare size & act_half_size
+		BGT		_ralloc_full		; branch if size > act_half_size
 		
 		; if size can fit inside act_half_size
 _ralloc_left
-		MOV		R11, R0				; save size in case ralloc left fails
-		MOV		R12, R2				; save right in case ralloc left fails
-		
+		PUSH	{R0-R7, LR}			; store sizes for current invocation
+
 		SUB		R2, R5, #MCB_ENT_SZ ; right = midpoint - mcb_ent_size
-		BL		_ralloc				; ralloc(size, left, (midpoint - mcb_ent_sz) )
+		BL		_ralloc				; heap_addr = ralloc(size, left, (midpoint - mcb_ent_sz) )
 		
-		MOV		R6, R0				; update heap_addr with value returned from ralloc		
-		CMP		R6, #INVALID		; check if ralloc left failed
+		POP		{R0-R7, LR}			; restore sizes
+	
+		CMP		R8, #INVALID		; check if ralloc left failed
 		BNE		_split_parent_mcb	; branch if succeeded
 		
 		; if ralloc left failed, try ralloc right
 _ralloc_right
-		MOV		R0, R11				; restore size
-		MOV		R2, R12				; restore right
 		MOV		R1, R5				; left = midpoint
 		BL		_ralloc				; ralloc(size, midpoint, right)
 		
 _split_parent_mcb
 		LDRH	R9, [R5]			; check if midpoint is marked as used
-		TST		R9, #0x01
+		TST		R9, #0x01			; 1 == used 0 == free
 		BNE		_return_heap_addr	; branch if used
 		
 		STRH	R7, [R5]			; store act_half_size in midpoint address
 		B		_return_heap_addr
 		
-_allocate_entire
-		LDRH	R9, [R1]			; check if left is marked as used
-		TST		R9, #0x01
+_ralloc_full
+		LDR		R9, [R1]			; check if left is marked as used
+		TST		R9, #0x01			; 1 == used 0 == free
 		BNE		_return_invalid		; branch if used
 		
-		LDRH	R9, [R1]			; size_available = half-word from left address
-		CMP		R9, R7				; compare size_available and act_entire_size
-		BLT		_return_invalid		; branch if not enough size
+		LDR		R9, [R1]			; compare size_available and act_entire_size
+		CMP		R9, R6
+		BLT		_return_invalid		; branch if not enough space
 		
-		ORR		R9, R7, #0x01		; mark left as used with act_entire_size | 0x01
+		ORR		R9, R6, #0x01		; mark left as used with act_entire_size | 0x01
 		STRH	R9, [R1]
 		
 		; calculate heap_addr = heap_top + (left - mcb_top) * 16
 		LDR		R9, =MCB_TOP
-		SUB		R6, R1, R9			; R6 = left - mcb_top
-		LSL		R6, R6, #4			; R6 = (left - mcb_top) * 16
+		SUB		R8, R1, R9			; R8 = left - mcb_top
+		LSL		R8, R8, #4			; R8 = (left - mcb_top) * 16
 		LDR		R9, =HEAP_TOP
-		ADD		R6, R6, R9			; R6 = heap_top + (left - mcb_top) * 16
+		ADD		R8, R8, R9			; R8 = heap_top + (left - mcb_top) * 16
 		B		_return_heap_addr
-		
-_return_heap_addr
-		MOV		R0, R6
-		B		_ralloc_done
 
 _return_invalid
-		MOV		R0, #INVALID
-		
-_ralloc_done
-		; resume registers & return
-		LDMFD	SP!, {R4-R12, LR}
+		MOV		R8, #INVALID
+
+_return_heap_addr
 		MOV		PC, LR
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Kernel Memory De-allocation
