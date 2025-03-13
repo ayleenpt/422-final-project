@@ -263,3 +263,4 @@ _rfree_invalid
 _rfree_done
 		LDMFD	SP!, {R4-R12, LR}
 		MOV		PC, LR
+		END
