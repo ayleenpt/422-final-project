@@ -209,9 +209,9 @@ _rfree
 		BNE		_rfree_right
 		
 _rfree_left
-		ADD		R5, R0, R3			; buddy = mcb_addr + mcb_chunk
+		ADD		R5, R0, R3			; buddy_address = mcb_addr + mcb_chunk, buddy = [R5]
 		
-		LDR		R9, =MCB_BOT		; return INVALID if buddy >= HEAP_BOT
+		LDR		R9, =MCB_BOT		; return INVALID if buddy_address >= HEAP_BOT
 		CMP		R5, R9
 		BGE		_rfree_invalid
 		
@@ -223,19 +223,20 @@ _rfree_left
 		LSR		R5, R5, #5			; div by 32
 		LSL		R5, R5, #5			; mult by 32
 		
-		CMP		R5, R4				; return mcb_addr if buddy != my_size
+		LDR		R9, [R5]			; return mcb_addr if buddy != my_size
+		CMP		R9, R4
 		BNE		_rfree_done
 		
 		MOV		R9, #0
 		STRH	R9, [R5]			; clear buddy
 		LSL		R4, R4, #1			; double my size
-		STRH	R4, [R5]			; merge buddy
+		STRH	R4, [R0]			; merge buddy
 		BL		_rfree				; promote myself
 		
 _rfree_right
-		SUB		R5, R0, R3			; buddy = mcb_addr - mcb_chunk
+		SUB		R5, R0, R3			; buddy_address = mcb_addr - mcb_chunk, buddy = [R5]
 		
-		LDR		R9, =MCB_TOP		; return INVALID if buddy < MCB_TOP
+		LDR		R9, =MCB_TOP		; return INVALID if buddy_address < MCB_TOP
 		CMP		R5, R9
 		BLT		_rfree_invalid
 		
@@ -247,14 +248,15 @@ _rfree_right
 		LSR		R5, R5, #5			; div by 32
 		LSL		R5, R5, #5			; mult by 32
 		
-		CMP		R5, R4				; return mcb_addr if buddy != my_size
+		LDR		R9, [R5]			; return mcb_addr if buddy != my_size
+		CMP		R9, R4
 		BNE		_rfree_done
 		
 		MOV		R9, #0
 		STRH	R9, [R0]			; clear myself
 		LSL		R4, R4, #1			; double my size
-		STRH	R4, [R0, R3]		; merge me to buddy
-		SUB		R0, R0, R3			; promote buddy
+		STRH	R4, [R5]			; merge me to buddy
+		MOV		R0, R5				; promote buddy
 		BL		_rfree
 
 _rfree_invalid

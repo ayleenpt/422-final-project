@@ -19,11 +19,11 @@ void sig_handler2( int signum ) {
 }
 
 int main( ) {
-//	char stringA[40] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabc\0";
-//	char stringB[40];
-//	//_bzero( stringB, 40 );
-//	_strncpy( stringB, stringA, 40 );
-//	_bzero( stringA, 40 );
+	char stringA[40] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabc\0";
+	char stringB[40];
+	_bzero( stringB, 40 );
+	_strncpy( stringB, stringA, 40 );
+	_bzero( stringA, 40 );
 	void* mem1 = _malloc( 1024 );
 	void* mem2 = _malloc( 1024 );
 	void* mem3 = _malloc( 8192 );
