@@ -92,7 +92,10 @@ _timer_update_done ; return to wherever it was called here
 		LDMFD	SP!, {R4-R12, LR}
 		BLX		LR		; return to SysTick_Handler
 
-_timer_stop ;;;;; issue here
+_timer_stop
+		; save registers
+		STMFD   SP!, {R4-R12, LR}
+		
 		; load user function into R1
 		LDR		R1, =USR_HANDLER
 		LDR		R1, [R1]
@@ -104,9 +107,11 @@ _timer_stop ;;;;; issue here
 		STR		R2, [R3]
 		
 		; branch and link
-		LDMFD	SP!, {R4-R12, LR}
-		; stores where program is currently at in LR, then it calls function. so when we return to the callee, we know where to go.
 		BLX		R1
+		
+		; resume registers and return
+		LDMFD	SP!, {R4-R12, LR}
+		MOV		PC, LR		
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Timer update
