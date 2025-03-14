@@ -390,24 +390,24 @@
               <FilePath>..\C_Programs\driver_keil.c</FilePath>
             </File>
             <File>
-              <FileName>heap_template.s</FileName>
+              <FileName>heap.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\Thumb2_Programs\heap_template.s</FilePath>
+              <FilePath>..\Thumb2_Programs\heap.s</FilePath>
             </File>
             <File>
-              <FileName>stdlib_template.s</FileName>
+              <FileName>stdlib.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\Thumb2_Programs\stdlib_template.s</FilePath>
+              <FilePath>..\Thumb2_Programs\stdlib.s</FilePath>
             </File>
             <File>
-              <FileName>svc_template.s</FileName>
+              <FileName>svc.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\Thumb2_Programs\svc_template.s</FilePath>
+              <FilePath>..\Thumb2_Programs\svc.s</FilePath>
             </File>
             <File>
-              <FileName>timer_template.s</FileName>
+              <FileName>timer.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\Thumb2_Programs\timer_template.s</FilePath>
+              <FilePath>..\Thumb2_Programs\timer.s</FilePath>
             </File>
           </Files>
         </Group>

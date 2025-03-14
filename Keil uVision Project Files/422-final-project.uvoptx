@@ -266,8 +266,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Thumb2_Programs\heap_template.s</PathWithFileName>
-      <FilenameWithoutPath>heap_template.s</FilenameWithoutPath>
+      <PathWithFileName>..\Thumb2_Programs\heap.s</PathWithFileName>
+      <FilenameWithoutPath>heap.s</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -278,8 +278,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Thumb2_Programs\stdlib_template.s</PathWithFileName>
-      <FilenameWithoutPath>stdlib_template.s</FilenameWithoutPath>
+      <PathWithFileName>..\Thumb2_Programs\stdlib.s</PathWithFileName>
+      <FilenameWithoutPath>stdlib.s</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -290,8 +290,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Thumb2_Programs\svc_template.s</PathWithFileName>
-      <FilenameWithoutPath>svc_template.s</FilenameWithoutPath>
+      <PathWithFileName>..\Thumb2_Programs\svc.s</PathWithFileName>
+      <FilenameWithoutPath>svc.s</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -302,8 +302,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Thumb2_Programs\timer_template.s</PathWithFileName>
-      <FilenameWithoutPath>timer_template.s</FilenameWithoutPath>
+      <PathWithFileName>..\Thumb2_Programs\timer.s</PathWithFileName>
+      <FilenameWithoutPath>timer.s</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

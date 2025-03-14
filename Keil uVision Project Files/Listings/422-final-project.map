@@ -10,22 +10,22 @@ Section Cross References
     driver_keil.o(.ARM.exidx.text.sig_handler2) refers to driver_keil.o(.text.sig_handler2) for [Anonymous Symbol]
     driver_keil.o(.text.main) refers to driver_keil.o(.rodata.str1.1) for .L__const.main.stringA
     driver_keil.o(.text.main) refers to rt_memcpy_v6.o(.text) for __aeabi_memcpy
-    driver_keil.o(.text.main) refers to stdlib_template.o(.text) for _bzero
+    driver_keil.o(.text.main) refers to stdlib.o(.text) for _bzero
     driver_keil.o(.text.main) refers to driver_keil.o(.bss.alarmed) for alarmed
     driver_keil.o(.text.main) refers to driver_keil.o(.text.sig_handler1) for sig_handler1
     driver_keil.o(.text.main) refers to driver_keil.o(.text.sig_handler2) for sig_handler2
     driver_keil.o(.ARM.exidx.text.main) refers to driver_keil.o(.text.main) for [Anonymous Symbol]
-    svc_template.o(.text) refers to timer_template.o(.text) for _timer_start
-    svc_template.o(.text) refers to heap_template.o(.text) for _kalloc
+    svc.o(.text) refers to timer.o(.text) for _timer_start
+    svc.o(.text) refers to heap.o(.text) for _kalloc
     startup_tm4c129.o(HEAP) refers (Special) to heapauxi.o(.text) for __use_two_region_memory
     startup_tm4c129.o(STACK) refers (Special) to heapauxi.o(.text) for __use_two_region_memory
     startup_tm4c129.o(RESET) refers (Special) to heapauxi.o(.text) for __use_two_region_memory
     startup_tm4c129.o(RESET) refers to startup_tm4c129.o(STACK) for __initial_sp
     startup_tm4c129.o(RESET) refers to startup_tm4c129.o(.text) for Reset_Handler
     startup_tm4c129.o(.text) refers (Special) to heapauxi.o(.text) for __use_two_region_memory
-    startup_tm4c129.o(.text) refers to svc_template.o(.text) for _syscall_table_init
-    startup_tm4c129.o(.text) refers to heap_template.o(.text) for _heap_init
-    startup_tm4c129.o(.text) refers to timer_template.o(.text) for _timer_init
+    startup_tm4c129.o(.text) refers to svc.o(.text) for _syscall_table_init
+    startup_tm4c129.o(.text) refers to heap.o(.text) for _heap_init
+    startup_tm4c129.o(.text) refers to timer.o(.text) for _timer_init
     startup_tm4c129.o(.text) refers to startup_tm4c129.o(STACK) for __initial_sp
     startup_tm4c129.o(.text) refers to system_tm4c129.o(.text.SystemInit) for SystemInit
     startup_tm4c129.o(.text) refers to __main.o(!!!main) for __main
@@ -167,10 +167,10 @@ Image Symbol Table
 
     Symbol Name                              Value     Ov Type        Size  Object(Section)
 
-    ../Thumb2_Programs/heap_template.s       0x00000000   Number         0  heap_template.o ABSOLUTE
-    ../Thumb2_Programs/stdlib_template.s     0x00000000   Number         0  stdlib_template.o ABSOLUTE
-    ../Thumb2_Programs/svc_template.s        0x00000000   Number         0  svc_template.o ABSOLUTE
-    ../Thumb2_Programs/timer_template.s      0x00000000   Number         0  timer_template.o ABSOLUTE
+    ../Thumb2_Programs/heap.s                0x00000000   Number         0  heap.o ABSOLUTE
+    ../Thumb2_Programs/stdlib.s              0x00000000   Number         0  stdlib.o ABSOLUTE
+    ../Thumb2_Programs/svc.s                 0x00000000   Number         0  svc.o ABSOLUTE
+    ../Thumb2_Programs/timer.s               0x00000000   Number         0  timer.o ABSOLUTE
     ../clib/angel/boardlib.s                 0x00000000   Number         0  boardinit1.o ABSOLUTE
     ../clib/angel/boardlib.s                 0x00000000   Number         0  boardinit2.o ABSOLUTE
     ../clib/angel/boardlib.s                 0x00000000   Number         0  boardinit3.o ABSOLUTE
@@ -276,16 +276,16 @@ Image Symbol Table
     .ARM.Collect$$rtexit$$00000002           0x000002c0   Section        0  rtexit2.o(.ARM.Collect$$rtexit$$00000002)
     .ARM.Collect$$rtexit$$00000003           0x000002c0   Section        4  rtexit2.o(.ARM.Collect$$rtexit$$00000003)
     .ARM.Collect$$rtexit$$00000004           0x000002c4   Section        6  rtexit2.o(.ARM.Collect$$rtexit$$00000004)
-    $v0                                      0x000002cc   Number         0  heap_template.o(.text)
-    .text                                    0x000002cc   Section      444  heap_template.o(.text)
-    $v0                                      0x00000488   Number         0  stdlib_template.o(.text)
-    .text                                    0x00000488   Section      126  stdlib_template.o(.text)
-    $v0                                      0x00000508   Number         0  svc_template.o(.text)
-    .text                                    0x00000508   Section      136  svc_template.o(.text)
-    _sys_exit                                0x0000056f   Thumb Code     0  svc_template.o(.text)
-    _memcpy                                  0x00000571   Thumb Code     0  svc_template.o(.text)
-    $v0                                      0x00000590   Number         0  timer_template.o(.text)
-    .text                                    0x00000590   Section      152  timer_template.o(.text)
+    $v0                                      0x000002cc   Number         0  heap.o(.text)
+    .text                                    0x000002cc   Section      444  heap.o(.text)
+    $v0                                      0x00000488   Number         0  stdlib.o(.text)
+    .text                                    0x00000488   Section      126  stdlib.o(.text)
+    $v0                                      0x00000508   Number         0  svc.o(.text)
+    .text                                    0x00000508   Section      136  svc.o(.text)
+    _sys_exit                                0x0000056f   Thumb Code     0  svc.o(.text)
+    _memcpy                                  0x00000571   Thumb Code     0  svc.o(.text)
+    $v0                                      0x00000590   Number         0  timer.o(.text)
+    .text                                    0x00000590   Section      152  timer.o(.text)
     $v0                                      0x00000628   Number         0  startup_tm4c129.o(.text)
     .text                                    0x00000628   Section      392  startup_tm4c129.o(.text)
     .text                                    0x000007b0   Section      138  rt_memcpy_v6.o(.text)
@@ -400,21 +400,21 @@ Image Symbol Table
     __rt_exit_ls                             0x000002c1   Thumb Code     0  rtexit2.o(.ARM.Collect$$rtexit$$00000003)
     __rt_exit_prels_1                        0x000002c1   Thumb Code     0  rtexit2.o(.ARM.Collect$$rtexit$$00000002)
     __rt_exit_exit                           0x000002c5   Thumb Code     0  rtexit2.o(.ARM.Collect$$rtexit$$00000004)
-    _heap_init                               0x000002cd   Thumb Code     0  heap_template.o(.text)
-    _kalloc                                  0x000002ff   Thumb Code     0  heap_template.o(.text)
-    _kfree                                   0x000003a1   Thumb Code     0  heap_template.o(.text)
-    _bzero                                   0x00000489   Thumb Code     0  stdlib_template.o(.text)
-    _strncpy                                 0x000004a5   Thumb Code     0  stdlib_template.o(.text)
-    _malloc                                  0x000004c5   Thumb Code     0  stdlib_template.o(.text)
-    _free                                    0x000004d7   Thumb Code     0  stdlib_template.o(.text)
-    _alarm                                   0x000004e7   Thumb Code     0  stdlib_template.o(.text)
-    _signal                                  0x000004f7   Thumb Code     0  stdlib_template.o(.text)
-    _syscall_table_init                      0x00000509   Thumb Code     0  svc_template.o(.text)
-    _syscall_table_jump                      0x00000555   Thumb Code     0  svc_template.o(.text)
-    _timer_init                              0x00000591   Thumb Code     0  timer_template.o(.text)
-    _timer_start                             0x000005ab   Thumb Code     0  timer_template.o(.text)
-    _timer_update                            0x000005c9   Thumb Code     0  timer_template.o(.text)
-    _signal_handler                          0x000005fb   Thumb Code     0  timer_template.o(.text)
+    _heap_init                               0x000002cd   Thumb Code     0  heap.o(.text)
+    _kalloc                                  0x000002ff   Thumb Code     0  heap.o(.text)
+    _kfree                                   0x000003a1   Thumb Code     0  heap.o(.text)
+    _bzero                                   0x00000489   Thumb Code     0  stdlib.o(.text)
+    _strncpy                                 0x000004a5   Thumb Code     0  stdlib.o(.text)
+    _malloc                                  0x000004c5   Thumb Code     0  stdlib.o(.text)
+    _free                                    0x000004d7   Thumb Code     0  stdlib.o(.text)
+    _alarm                                   0x000004e7   Thumb Code     0  stdlib.o(.text)
+    _signal                                  0x000004f7   Thumb Code     0  stdlib.o(.text)
+    _syscall_table_init                      0x00000509   Thumb Code     0  svc.o(.text)
+    _syscall_table_jump                      0x00000555   Thumb Code     0  svc.o(.text)
+    _timer_init                              0x00000591   Thumb Code     0  timer.o(.text)
+    _timer_start                             0x000005ab   Thumb Code     0  timer.o(.text)
+    _timer_update                            0x000005c9   Thumb Code     0  timer.o(.text)
+    _signal_handler                          0x000005fb   Thumb Code     0  timer.o(.text)
     Reset_Handler                            0x00000629   Thumb Code    48  startup_tm4c129.o(.text)
     NMI_Handler                              0x00000659   Thumb Code     2  startup_tm4c129.o(.text)
     HardFault_Handler                        0x0000065b   Thumb Code     2  startup_tm4c129.o(.text)
@@ -645,11 +645,11 @@ Memory Map of the image
     0x000002c0   0x000002c0   0x00000004   Code   RO          140    .ARM.Collect$$rtexit$$00000003  c_w.l(rtexit2.o)
     0x000002c4   0x000002c4   0x00000006   Code   RO          141    .ARM.Collect$$rtexit$$00000004  c_w.l(rtexit2.o)
     0x000002ca   0x000002ca   0x00000002   PAD
-    0x000002cc   0x000002cc   0x000001bc   Code   RO           17    .text               heap_template.o
-    0x00000488   0x00000488   0x0000007e   Code   RO           22    .text               stdlib_template.o
+    0x000002cc   0x000002cc   0x000001bc   Code   RO           17    .text               heap.o
+    0x00000488   0x00000488   0x0000007e   Code   RO           22    .text               stdlib.o
     0x00000506   0x00000506   0x00000002   PAD
-    0x00000508   0x00000508   0x00000088   Code   RO           25    .text               svc_template.o
-    0x00000590   0x00000590   0x00000098   Code   RO           28    .text               timer_template.o
+    0x00000508   0x00000508   0x00000088   Code   RO           25    .text               svc.o
+    0x00000590   0x00000590   0x00000098   Code   RO           28    .text               timer.o
     0x00000628   0x00000628   0x00000188   Code   RO           34  * .text               startup_tm4c129.o
     0x000007b0   0x000007b0   0x0000008a   Code   RO           52    .text               c_w.l(rt_memcpy_v6.o)
     0x0000083a   0x0000083a   0x00000006   Code   RO           54    .text               c_w.l(heapauxi.o)
@@ -698,15 +698,15 @@ Image component sizes
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Object Name
 
        374          0         40          0          4       1352   driver_keil.o
-       444         22          0          0          0        480   heap_template.o
+       444         22          0          0          0        460   heap.o
        392         34        512          0      24576       6080   startup_tm4c129.o
-       126          0          0          0          0        356   stdlib_template.o
-       136         30          0          0          0        336   svc_template.o
+       126          0          0          0          0        336   stdlib.o
+       136         30          0          0          0        316   svc.o
         36          0          0          4          0       1555   system_tm4c129.o
-       152         22          0          0          0        356   timer_template.o
+       152         22          0          0          0        340   timer.o
 
     ----------------------------------------------------------------------
-      1666        108        584          4      24584      10515   Object Totals
+      1666        108        584          4      24584      10439   Object Totals
          0          0         32          0          0          0   (incl. Generated)
          6          0          0          0          4          0   (incl. Padding)
 
@@ -759,8 +759,8 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-      2256        124        584          4      24680      11151   Grand Totals
-      2256        124        584          4      24680      11151   ELF Image Totals
+      2256        124        584          4      24680      11075   Grand Totals
+      2256        124        584          4      24680      11075   ELF Image Totals
       2256        124        584          4          0          0   ROM Totals
 
 ==============================================================================

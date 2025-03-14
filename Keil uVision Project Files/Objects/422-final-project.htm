@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\Objects\422-final-project.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Objects\422-final-project.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6220000: Last Updated: Thu Mar 13 15:25:51 2025
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6220000: Last Updated: Thu Mar 13 20:31:24 2025
 <BR><P>
 <H3>Maximum Stack Usage =        160 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -289,12 +289,12 @@ Function Pointers
  <LI><a href="#[5]">UsageFault_Handler</a> from startup_tm4c129.o(.text) referenced from startup_tm4c129.o(RESET)
  <LI><a href="#[1c]">WDT0_Handler</a> from startup_tm4c129.o(.text) referenced from startup_tm4c129.o(RESET)
  <LI><a href="#[7e]">__main</a> from __main.o(!!!main) referenced from startup_tm4c129.o(.text)
- <LI><a href="#[7b]">_kalloc</a> from heap_template.o(.text) referenced from svc_template.o(.text)
- <LI><a href="#[7c]">_kfree</a> from heap_template.o(.text) referenced from svc_template.o(.text)
- <LI><a href="#[7a]">_memcpy</a> from svc_template.o(.text) referenced from svc_template.o(.text)
- <LI><a href="#[79]">_signal_handler</a> from timer_template.o(.text) referenced from svc_template.o(.text)
- <LI><a href="#[77]">_sys_exit</a> from svc_template.o(.text) referenced from svc_template.o(.text)
- <LI><a href="#[78]">_timer_start</a> from timer_template.o(.text) referenced from svc_template.o(.text)
+ <LI><a href="#[7b]">_kalloc</a> from heap.o(.text) referenced from svc.o(.text)
+ <LI><a href="#[7c]">_kfree</a> from heap.o(.text) referenced from svc.o(.text)
+ <LI><a href="#[7a]">_memcpy</a> from svc.o(.text) referenced from svc.o(.text)
+ <LI><a href="#[79]">_signal_handler</a> from timer.o(.text) referenced from svc.o(.text)
+ <LI><a href="#[77]">_sys_exit</a> from svc.o(.text) referenced from svc.o(.text)
+ <LI><a href="#[78]">_timer_start</a> from timer.o(.text) referenced from svc.o(.text)
  <LI><a href="#[7f]">sig_handler1</a> from driver_keil.o(.text.sig_handler1) referenced 2 times from driver_keil.o(.text.main)
  <LI><a href="#[80]">sig_handler2</a> from driver_keil.o(.text.sig_handler2) referenced 2 times from driver_keil.o(.text.main)
 </UL>
@@ -442,61 +442,61 @@ Global Symbols
 <BR><BR>[Calls]<UL><LI><a href="#[9e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_sys_exit
 </UL>
 
-<P><STRONG><a name="[a0]"></a>_heap_init</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, heap_template.o(.text))
+<P><STRONG><a name="[a0]"></a>_heap_init</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, heap.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Reset_Handler
 </UL>
 
-<P><STRONG><a name="[7b]"></a>_kalloc</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, heap_template.o(.text))
-<BR>[Address Reference Count : 1]<UL><LI> svc_template.o(.text)
+<P><STRONG><a name="[7b]"></a>_kalloc</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, heap.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> svc.o(.text)
 </UL>
-<P><STRONG><a name="[7c]"></a>_kfree</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, heap_template.o(.text))
-<BR>[Address Reference Count : 1]<UL><LI> svc_template.o(.text)
+<P><STRONG><a name="[7c]"></a>_kfree</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, heap.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> svc.o(.text)
 </UL>
-<P><STRONG><a name="[a9]"></a>_bzero</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, stdlib_template.o(.text))
+<P><STRONG><a name="[a9]"></a>_bzero</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, stdlib.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[aa]"></a>_strncpy</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, stdlib_template.o(.text))
+<P><STRONG><a name="[aa]"></a>_strncpy</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, stdlib.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[ab]"></a>_malloc</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, stdlib_template.o(.text))
+<P><STRONG><a name="[ab]"></a>_malloc</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, stdlib.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[ac]"></a>_free</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, stdlib_template.o(.text))
+<P><STRONG><a name="[ac]"></a>_free</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, stdlib.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[ae]"></a>_alarm</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, stdlib_template.o(.text))
+<P><STRONG><a name="[ae]"></a>_alarm</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, stdlib.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[ad]"></a>_signal</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, stdlib_template.o(.text))
+<P><STRONG><a name="[ad]"></a>_signal</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, stdlib.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[9f]"></a>_syscall_table_init</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, svc_template.o(.text))
+<P><STRONG><a name="[9f]"></a>_syscall_table_init</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, svc.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Reset_Handler
 </UL>
 
-<P><STRONG><a name="[a2]"></a>_syscall_table_jump</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, svc_template.o(.text))
+<P><STRONG><a name="[a2]"></a>_syscall_table_jump</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, svc.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SVC_Handler
 </UL>
 
-<P><STRONG><a name="[a1]"></a>_timer_init</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, timer_template.o(.text))
+<P><STRONG><a name="[a1]"></a>_timer_init</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, timer.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Reset_Handler
 </UL>
 
-<P><STRONG><a name="[78]"></a>_timer_start</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, timer_template.o(.text))
-<BR>[Address Reference Count : 1]<UL><LI> svc_template.o(.text)
+<P><STRONG><a name="[78]"></a>_timer_start</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, timer.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> svc.o(.text)
 </UL>
-<P><STRONG><a name="[a3]"></a>_timer_update</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, timer_template.o(.text))
+<P><STRONG><a name="[a3]"></a>_timer_update</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, timer.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SysTick_Handler
 </UL>
 
-<P><STRONG><a name="[79]"></a>_signal_handler</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, timer_template.o(.text))
-<BR>[Address Reference Count : 1]<UL><LI> svc_template.o(.text)
+<P><STRONG><a name="[79]"></a>_signal_handler</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, timer.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> svc.o(.text)
 </UL>
 <P><STRONG><a name="[0]"></a>Reset_Handler</STRONG> (Thumb, 48 bytes, Stack size 0 bytes, startup_tm4c129.o(.text))
 <BR><BR>[Calls]<UL><LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_timer_init
@@ -1505,11 +1505,11 @@ Global Symbols
 <H3>
 Local Symbols
 </H3>
-<P><STRONG><a name="[77]"></a>_sys_exit</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, svc_template.o(.text))
-<BR>[Address Reference Count : 1]<UL><LI> svc_template.o(.text)
+<P><STRONG><a name="[77]"></a>_sys_exit</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, svc.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> svc.o(.text)
 </UL>
-<P><STRONG><a name="[7a]"></a>_memcpy</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, svc_template.o(.text))
-<BR>[Address Reference Count : 1]<UL><LI> svc_template.o(.text)
+<P><STRONG><a name="[7a]"></a>_memcpy</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, svc.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> svc.o(.text)
 </UL><P>
 <H3>
 Undefined Global Symbols
