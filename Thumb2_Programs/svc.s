@@ -83,7 +83,6 @@ _syscall_table_jump
 		BX		LR
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; idk what's going on with these two lol
 _sys_exit
 		MOV     PC, LR
 
